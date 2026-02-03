@@ -1,0 +1,225 @@
+.dashboard-page {
+  min-height: 100vh;
+  background-color: #f5f7f0;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 4rem;
+}
+
+.dashboard-header {
+  background-color: #fafbf8;
+  border-bottom: 1px solid #e8ebdf;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.dashboard-header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dashboard-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.dashboard-brand {
+  margin: 0;
+}
+
+.dashboard-app-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2d4a2a;
+  margin: 0 0 0.125rem;
+  letter-spacing: -0.02em;
+}
+
+.dashboard-tagline {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #5a7c58;
+  letter-spacing: 0.12em;
+  margin: 0;
+}
+
+.dashboard-welcome {
+  font-size: 0.875rem;
+  color: #5c5c5c;
+  margin: 0.25rem 0 0;
+}
+
+.dashboard-logout {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #2d4a2a;
+  background-color: #e8ecd8;
+  border: 1px solid #3d6b3a;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.dashboard-logout:hover {
+  background-color: #dce4d0;
+  border-color: #2d4a2a;
+}
+
+.dashboard-main {
+  flex: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  width: 100%;
+}
+
+.dashboard-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #2d4a2a;
+  margin: 0 0 0.25rem;
+}
+
+.dashboard-subtitle {
+  font-size: 0.9375rem;
+  color: #5c5c5c;
+  margin: 0 0 2rem;
+}
+
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.dashboard-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(45, 74, 42, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.dashboard-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  flex-shrink: 0;
+}
+
+.dashboard-card-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.dashboard-card-icon-todo {
+  background-color: #e8ecd8;
+  border: 1px solid #5a7c58;
+  color: #3d6b3a;
+}
+
+.dashboard-card-icon-sowing {
+  background-color: #fef3d9;
+  border: 1px solid #d4a84b;
+  color: #b8860b;
+}
+
+.dashboard-card-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #2d4a2a;
+  margin: 0 0 0.5rem;
+}
+
+.dashboard-card-desc {
+  font-size: 0.9375rem;
+  color: #213547;
+  margin: 0 0 0.25rem;
+}
+
+.dashboard-card-detail {
+  font-size: 0.8125rem;
+  color: #5c5c5c;
+  line-height: 1.4;
+  margin: 0 0 1rem;
+  flex: 1;
+}
+
+.dashboard-card-btn {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  font-family: inherit;
+  text-align: center;
+  text-decoration: none;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+  box-sizing: border-box;
+}
+
+.dashboard-card-btn:active {
+  transform: scale(0.98);
+}
+
+.dashboard-card-btn-green {
+  background-color: #3d6b3a;
+  color: #ffffff;
+}
+
+.dashboard-card-btn-green:hover {
+  background-color: #2d4a2a;
+}
+
+.dashboard-card-btn-orange {
+  background-color: #d4a84b;
+  color: #ffffff;
+}
+
+.dashboard-card-btn-orange:hover {
+  background-color: #b8860b;
+}
+
+.dashboard-help {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #5c5c5c;
+  color: #ffffff;
+  font-size: 1.25rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  transition: background-color 0.2s;
+}
+
+.dashboard-help:hover {
+  background-color: #4a4a4a;
+  color: #ffffff;
+}

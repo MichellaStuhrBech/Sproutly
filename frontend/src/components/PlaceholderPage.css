@@ -1,0 +1,28 @@
+.placeholder-page {
+  min-height: 100vh;
+  background-color: #f5f7f0;
+  padding: 2rem;
+}
+
+.placeholder-back {
+  display: inline-block;
+  color: #3d6b3a;
+  font-weight: 600;
+  text-decoration: none;
+  margin-bottom: 2rem;
+}
+
+.placeholder-back:hover {
+  color: #2d4a2a;
+}
+
+.placeholder-title {
+  font-size: 1.5rem;
+  color: #2d4a2a;
+  margin: 0 0 0.5rem;
+}
+
+.placeholder-text {
+  color: #5c5c5c;
+  margin: 0;
+}

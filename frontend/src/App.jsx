@@ -1,23 +1,24 @@
-import { useState } from 'react'
+import { Routes, Route } from 'react-router-dom'
+import LandingPage from './components/LandingPage'
+import LoginPage from './components/LoginPage'
+import CreateAccountPage from './components/CreateAccountPage'
+import DashboardPage from './components/DashboardPage'
+import TodoPage from './components/TodoPage'
+import SowingPage from './components/SowingPage'
+import HelpPage from './components/HelpPage'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <h1>Sproutly</h1>
-        <div className="card">
-          <button onClick={() => setCount((count) => count + 1)}>
-            count is {count}
-          </button>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test HMR
-          </p>
-        </div>
-      </div>
-    </>
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/create-account" element={<CreateAccountPage />} />
+      <Route path="/dashboard" element={<DashboardPage />} />
+      <Route path="/todo" element={<TodoPage />} />
+      <Route path="/sowing" element={<SowingPage />} />
+      <Route path="/help" element={<HelpPage />} />
+    </Routes>
   )
 }
 
