@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "7070:7070"
+    environment:
+      - DEPLOYED=true
+      - DB_NAME=sproutly
+      - CONNECTION_STR=jdbc:postgresql://db:5432/sproutly
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+    depends_on:
+      - db
+    healthcheck:
+      # Ret denne hvis din health route er en anden:
+      test: ["CMD", "curl", "-f", "http://localhost:7070/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  db:
+    image: postgres:15-alpine
+    container_name: sproutly_postgres
+    environment:
+      POSTGRES_DB: sproutly
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - sproutly_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  sproutly_postgres_data:
