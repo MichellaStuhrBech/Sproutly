@@ -57,7 +57,7 @@ void registerUser_validInput_createsUser() {
                     .body(json)
                     .asString();
 
-            assertEquals(201, res.getStatus());
+            assertEquals(201, res.code());
 
             // DB assert (JPA)
             var em = emf.createEntityManager();
@@ -75,8 +75,8 @@ void registerUser_validInput_createsUser() {
 
 
 @Test
-void registerUser_duplicateEmail_returnsConflict() { ... }
+void registerUser_duplicateEmail_returnsConflict() {  }
 
 @Test
-void login_withRegisteredCredentials_returnsOk() { ... }
+void login_withRegisteredCredentials_returnsOk() {  }
 }
