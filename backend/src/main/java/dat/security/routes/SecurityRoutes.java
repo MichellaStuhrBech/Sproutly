@@ -25,6 +25,9 @@ public class SecurityRoutes {
                 post("/register", securityController.register(), Role.ANYONE);
                 post("/user/addrole", securityController.addRole(), Role.USER);
             });
+            path("/users", ()->{
+                post("/register", securityController.register(), Role.ANYONE);
+            });
         };
     }
     public static EndpointGroup getSecuredRoutes(){

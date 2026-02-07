@@ -32,7 +32,6 @@ public class RegisterUserIntegrationTest {
             em.getTransaction().begin();
             em.createNativeQuery("DELETE FROM user_roles").executeUpdate();
             em.createQuery("DELETE FROM User").executeUpdate();
-            em.createNativeQuery("ALTER SEQUENCE vetclinic_id_seq RESTART WITH 1").executeUpdate();
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -55,20 +54,20 @@ void registerUser_validInput_createsUser() {
                 }
                 """;
 
-            var res = client.post("/api/auth/register")
+            var res = client.post("/api/users/register")
                     .body(json)
                     .asString();
 
-            assertEquals(201, res.code());
+            assertEquals(201, res.code(), "Expected 201 Created when registering with valid email and password");
 
-            // DB assert (JPA) - security User stores email in username column
+            // DB assert: user is persisted, email stored as unique (username is PK and holds email)
             var em = emf.createEntityManager();
             try {
                 var count = em.createQuery(
                         "SELECT COUNT(u) FROM User u WHERE u.username = :email", Long.class)
                         .setParameter("email", "test@sproutly.dk")
                         .getSingleResult();
-                assertEquals(1L, count);
+                assertEquals(1L, count, "Exactly one user with this email should exist in database");
             } finally {
                 em.close();
             }
