@@ -1,10 +1,11 @@
 
+import dat.config.ApplicationConfig;
 import dat.config.HibernateConfig;
+import io.javalin.Javalin;
 import io.javalin.testtools.JavalinTest;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.*;
-import io.javalin.Javalin;
 import dat.daos.impl.UserDAO;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,12 +17,12 @@ public class RegisterUserIntegrationTest {
     private UserDAO userDAO;
     private Javalin app;
 
-        @BeforeAll
-        public void init() {
-            emf = HibernateConfig.getEntityManagerFactoryForTest();
-            userDAO = UserDAO.getInstance(emf);
-        }
-
+    @BeforeAll
+    public void init() {
+        emf = HibernateConfig.getEntityManagerFactoryForTest();
+        userDAO = UserDAO.getInstance(emf);
+        app = ApplicationConfig.createApp();
+    }
 
     @BeforeEach
     public void setUp() {
@@ -29,7 +30,8 @@ public class RegisterUserIntegrationTest {
         EntityManager em = emf.createEntityManager();
         try {
             em.getTransaction().begin();
-            em.createQuery("DELETE FROM user").executeUpdate();
+            em.createNativeQuery("DELETE FROM user_roles").executeUpdate();
+            em.createQuery("DELETE FROM User").executeUpdate();
             em.createNativeQuery("ALTER SEQUENCE vetclinic_id_seq RESTART WITH 1").executeUpdate();
             em.getTransaction().commit();
         } finally {
@@ -53,17 +55,17 @@ void registerUser_validInput_createsUser() {
                 }
                 """;
 
-            var res = client.post("/users/register")
+            var res = client.post("/api/auth/register")
                     .body(json)
                     .asString();
 
             assertEquals(201, res.code());
 
-            // DB assert (JPA)
+            // DB assert (JPA) - security User stores email in username column
             var em = emf.createEntityManager();
             try {
                 var count = em.createQuery(
-                        "SELECT COUNT(u) FROM User u WHERE u.email = :email", Long.class)
+                        "SELECT COUNT(u) FROM User u WHERE u.username = :email", Long.class)
                         .setParameter("email", "test@sproutly.dk")
                         .getSingleResult();
                 assertEquals(1L, count);
