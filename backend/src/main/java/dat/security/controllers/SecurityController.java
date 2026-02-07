@@ -174,6 +174,8 @@ public class SecurityController implements ISecurityController {
         } catch (ParseException | JOSEException | NotAuthorizedException e) {
             e.printStackTrace();
             throw new ApiException(HttpStatus.UNAUTHORIZED.getCode(), "Unauthorized. Could not verify token");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

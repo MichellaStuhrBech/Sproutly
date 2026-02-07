@@ -11,6 +11,9 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityNotFoundException;
 
+import org.mindrot.jbcrypt.BCrypt;
+
+import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -81,6 +84,51 @@ public class SecurityDAO implements ISecurityDAO {
             user.addRole(role);
             em.getTransaction().commit();
             return user;
+        }
+    }
+
+    @Override
+    public List<AuthUserDTO> getAllUsers() {
+        try (EntityManager em = getEntityManager()) {
+            List<User> users = em.createQuery("SELECT u FROM User u", User.class).getResultList();
+            return users.stream()
+                    .map(u -> new AuthUserDTO(u.getUsername(), u.getRoles().stream().map(r -> r.getRoleName()).collect(Collectors.toSet())))
+                    .collect(Collectors.toList());
+        }
+    }
+
+    @Override
+    public AuthUserDTO getByEmail(String email) {
+        try (EntityManager em = getEntityManager()) {
+            User user = em.find(User.class, email);
+            if (user == null)
+                throw new EntityNotFoundException("No user found with email: " + email);
+            user.getRoles().size();
+            return new AuthUserDTO(user.getUsername(), user.getRoles().stream().map(r -> r.getRoleName()).collect(Collectors.toSet()));
+        }
+    }
+
+    @Override
+    public void updateUser(String email, String newPassword) {
+        try (EntityManager em = getEntityManager()) {
+            User user = em.find(User.class, email);
+            if (user == null)
+                throw new EntityNotFoundException("No user found with email: " + email);
+            em.getTransaction().begin();
+            user.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
+            em.getTransaction().commit();
+        }
+    }
+
+    @Override
+    public void deleteUser(String email) {
+        try (EntityManager em = getEntityManager()) {
+            User user = em.find(User.class, email);
+            if (user == null)
+                throw new EntityNotFoundException("No user found with email: " + email);
+            em.getTransaction().begin();
+            em.remove(user);
+            em.getTransaction().commit();
         }
     }
 }
