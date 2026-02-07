@@ -1,12 +1,15 @@
+package dat;
 
 import dat.config.ApplicationConfig;
 import dat.config.HibernateConfig;
+import dat.daos.impl.UserDAO;
 import io.javalin.Javalin;
 import io.javalin.testtools.JavalinTest;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.*;
-import dat.daos.impl.UserDAO;
+
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,20 +46,15 @@ public class RegisterUserIntegrationTest {
         if (emf != null) emf.close();
     }
 
-@Test
-void registerUser_validInput_createsUser() {
-          JavalinTest.test(app, (server, client) -> {
+    @Test
+    void registerUser_validInput_createsUser() {
+        JavalinTest.test(app, (server, client) -> {
+            Map<String, String> body = Map.of(
+                    "email", "test@sproutly.dk",
+                    "password", "Secret123!"
+            );
 
-            String json = """
-                {
-                  "email": "test@sproutly.dk",
-                  "password": "Secret123!"
-                }
-                """;
-
-            var res = client.post("/api/users/register")
-                    .body(json)
-                    .asString();
+            var res = client.post("/api/users/register", body);
 
             assertEquals(201, res.code(), "Expected 201 Created when registering with valid email and password");
 
@@ -64,7 +62,7 @@ void registerUser_validInput_createsUser() {
             var em = emf.createEntityManager();
             try {
                 var count = em.createQuery(
-                        "SELECT COUNT(u) FROM User u WHERE u.username = :email", Long.class)
+                                "SELECT COUNT(u) FROM User u WHERE u.username = :email", Long.class)
                         .setParameter("email", "test@sproutly.dk")
                         .getSingleResult();
                 assertEquals(1L, count, "Exactly one user with this email should exist in database");
@@ -72,12 +70,13 @@ void registerUser_validInput_createsUser() {
                 em.close();
             }
         });
-}
+    }
 
+    @Test
+    void registerUser_duplicateEmail_returnsConflict() {
+    }
 
-@Test
-void registerUser_duplicateEmail_returnsConflict() {  }
-
-@Test
-void login_withRegisteredCredentials_returnsOk() {  }
+    @Test
+    void login_withRegisteredCredentials_returnsOk() {
+    }
 }
