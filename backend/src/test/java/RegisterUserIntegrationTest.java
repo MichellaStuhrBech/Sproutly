@@ -2,7 +2,6 @@ package dat;
 
 import dat.config.ApplicationConfig;
 import dat.config.HibernateConfig;
-import dat.daos.impl.UserDAO;
 import io.javalin.Javalin;
 import io.javalin.testtools.JavalinTest;
 import jakarta.persistence.EntityManager;
@@ -17,13 +16,11 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RegisterUserIntegrationTest {
 
     private EntityManagerFactory emf;
-    private UserDAO userDAO;
     private Javalin app;
 
     @BeforeAll
     public void init() {
         emf = HibernateConfig.getEntityManagerFactoryForTest();
-        userDAO = UserDAO.getInstance(emf);
         app = ApplicationConfig.createApp();
     }
 
@@ -58,11 +55,11 @@ public class RegisterUserIntegrationTest {
 
             assertEquals(201, res.code(), "Expected 201 Created when registering with valid email and password");
 
-            // DB assert: user is persisted, email stored as unique (username is PK and holds email)
+            // DB assert: user is persisted, email stored as unique
             var em = emf.createEntityManager();
             try {
                 var count = em.createQuery(
-                                "SELECT COUNT(u) FROM User u WHERE u.username = :email", Long.class)
+                                "SELECT COUNT(u) FROM User u WHERE u.email = :email", Long.class)
                         .setParameter("email", "test@sproutly.dk")
                         .getSingleResult();
                 assertEquals(1L, count, "Exactly one user with this email should exist in database");
@@ -93,7 +90,7 @@ public class RegisterUserIntegrationTest {
             var em = emf.createEntityManager();
             try {
                 var count = em.createQuery(
-                                "SELECT COUNT(u) FROM User u WHERE u.username = :email", Long.class)
+                                "SELECT COUNT(u) FROM User u WHERE u.email = :email", Long.class)
                         .setParameter("email", "test@sproutly.dk")
                         .getSingleResult();
                 assertEquals(1L, count, "There should still only be one user with this email");

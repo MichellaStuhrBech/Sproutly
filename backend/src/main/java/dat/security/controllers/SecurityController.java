@@ -80,15 +80,15 @@ public class SecurityController implements ISecurityController {
                 UserDTO userInput = ctx.bodyAsClass(UserDTO.class);
                 User created = securityDAO.createUser(userInput.getEmail(), userInput.getPassword());
 
-                String token = createToken(new AuthUserDTO(created.getUsername(), Set.of("USER")));
+                String token = createToken(new AuthUserDTO(created.getEmail(), Set.of("USER")));
                 ctx.status(HttpStatus.CREATED).json(returnObject
                         .put("token", token)
-                        .put("email", created.getUsername()));
+                        .put("email", created.getEmail()));
             } catch (EntityExistsException e) {
-                ctx.status(HttpStatus.UNPROCESSABLE_CONTENT);
-                ctx.json(returnObject.put("msg", "User already exists"));
-            }
-        };
+            throw new dat.security.exceptions.ApiException(409, "User already exists");
+        }
+
+    };
     }
 
     @Override
