@@ -74,7 +74,35 @@ public class RegisterUserIntegrationTest {
 
     @Test
     void registerUser_duplicateEmail_returnsConflict() {
+        JavalinTest.test(app, (server, client) -> {
+
+            Map<String, String> body = Map.of(
+                    "email", "test@sproutly.dk",
+                    "password", "Secret123!"
+            );
+
+            // First registration should succeed
+            var res1 = client.post("/api/users/register", body);
+            assertEquals(201, res1.code(), "First registration should succeed");
+
+            // Second registration with same email should fail
+            var res2 = client.post("/api/users/register", body);
+            assertEquals(409, res2.code(), "Expected 409 Conflict when registering with duplicate email");
+
+            // DB assert: still only 1 user
+            var em = emf.createEntityManager();
+            try {
+                var count = em.createQuery(
+                                "SELECT COUNT(u) FROM User u WHERE u.username = :email", Long.class)
+                        .setParameter("email", "test@sproutly.dk")
+                        .getSingleResult();
+                assertEquals(1L, count, "There should still only be one user with this email");
+            } finally {
+                em.close();
+            }
+        });
     }
+
 
     @Test
     void login_withRegisteredCredentials_returnsOk() {
