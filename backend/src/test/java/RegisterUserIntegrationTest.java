@@ -103,5 +103,32 @@ public class RegisterUserIntegrationTest {
 
     @Test
     void login_withRegisteredCredentials_returnsOk() {
-    }
+            JavalinTest.test(app, (server, client) -> {
+
+                // 1️⃣ Register user first
+                Map<String, String> registerBody = Map.of(
+                        "email", "test@sproutly.dk",
+                        "password", "Secret123!"
+                );
+
+                var registerRes = client.post("/api/users/register", registerBody);
+                assertEquals(201, registerRes.code(), "User should be registered");
+
+                // 2️⃣ Login with same credentials
+                Map<String, String> loginBody = Map.of(
+                        "email", "test@sproutly.dk",
+                        "password", "Secret123!"
+                );
+
+                var loginRes = client.post("/api/auth/login", loginBody);
+
+                assertEquals(200, loginRes.code(), "Expected 200 OK on successful login");
+
+                // 3️⃣ Optional: assert token exists in response
+                String responseBody = loginRes.body().string();
+                assertTrue(responseBody.contains("token"), "Response should contain a token");
+            });
+        }
+
+
 }
