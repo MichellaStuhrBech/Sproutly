@@ -12,7 +12,7 @@ public class Routes {
 
     public EndpointGroup getRoutes() {
         return () -> {
-                path("/createuser", animalRoutes.getRoutes());
+                path("/createuser", createUserRoutesRoutes.getRoutes());
 
             };
         }
