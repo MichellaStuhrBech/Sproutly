@@ -1,10 +1,57 @@
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import './CreateAccountPage.css'
 
+const API_BASE = '/api'
+
 function CreateAccountPage() {
-  const handleSubmit = (e) => {
+  const navigate = useNavigate()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // TODO: call create account API
+    setError('')
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match')
+      return
+    }
+
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters')
+      return
+    }
+
+    setLoading(true)
+    try {
+      const res = await fetch(`${API_BASE}/users/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      })
+
+      const data = await res.json().catch(() => ({}))
+
+      if (res.ok && res.status === 201) {
+        navigate('/login', { state: { message: 'Account created. Please log in.' } })
+        return
+      }
+
+      if (res.status === 409) {
+        setError(data.msg || 'An account with this email already exists.')
+        return
+      }
+
+      setError(data.msg || 'Something went wrong. Please try again.')
+    } catch (err) {
+      setError('Could not reach the server. Is the backend running on port 7070?')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -20,6 +67,12 @@ function CreateAccountPage() {
             Join Sproutly and start planning your garden
           </p>
 
+          {error && (
+            <div className="create-account-error" role="alert">
+              {error}
+            </div>
+          )}
+
           <form className="create-account-form" onSubmit={handleSubmit}>
             <label htmlFor="name" className="create-account-label">
               Name
@@ -30,7 +83,6 @@ function CreateAccountPage() {
               className="create-account-input"
               placeholder="Your name"
               autoComplete="name"
-              required
             />
 
             <label htmlFor="email" className="create-account-label">
@@ -42,6 +94,8 @@ function CreateAccountPage() {
               className="create-account-input"
               placeholder="your@email.com"
               autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
 
@@ -54,7 +108,10 @@ function CreateAccountPage() {
               className="create-account-input"
               placeholder="........"
               autoComplete="new-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
+              minLength={6}
             />
 
             <label htmlFor="confirmPassword" className="create-account-label">
@@ -66,11 +123,18 @@ function CreateAccountPage() {
               className="create-account-input"
               placeholder="........"
               autoComplete="new-password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               required
+              minLength={6}
             />
 
-            <button type="submit" className="create-account-btn">
-              Create Account
+            <button
+              type="submit"
+              className="create-account-btn"
+              disabled={loading}
+            >
+              {loading ? 'Creating…' : 'Create Account'}
             </button>
           </form>
         </div>

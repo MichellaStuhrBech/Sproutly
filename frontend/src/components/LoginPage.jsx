@@ -1,8 +1,10 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import './LoginPage.css'
 
 function LoginPage() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const successMessage = location.state?.message
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -24,6 +26,12 @@ function LoginPage() {
           <p className="login-subtitle">
             Enter your credentials to access your garden
           </p>
+
+          {successMessage && (
+            <div className="login-success" role="status">
+              {successMessage}
+            </div>
+          )}
 
           <form className="login-form" onSubmit={handleSubmit}>
             <label htmlFor="email" className="login-label">
