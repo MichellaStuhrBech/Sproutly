@@ -44,6 +44,16 @@
   margin: 0 0 1.5rem;
 }
 
+.create-account-error {
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.9375rem;
+  color: #b91c1c;
+  background-color: #fef2f2;
+  border-radius: 10px;
+  border: 1px solid #fecaca;
+}
+
 .create-account-form {
   display: flex;
   flex-direction: column;
@@ -101,4 +111,9 @@
 
 .create-account-btn:active {
   transform: scale(0.98);
+}
+
+.create-account-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }

@@ -11,6 +11,9 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityNotFoundException;
 
+import org.mindrot.jbcrypt.BCrypt;
+
+import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -40,7 +43,7 @@ public class SecurityDAO implements ISecurityDAO {
             user.getRoles().size(); // force roles to be fetched from db
             if (!user.verifyPassword(password))
                 throw new ValidationException("Wrong password");
-            return new AuthUserDTO(user.getUsername(), user.getRoles().stream().map(r -> r.getRoleName()).collect(Collectors.toSet()));
+            return new AuthUserDTO(user.getEmail(), user.getRoles().stream().map(r -> r.getRoleName()).collect(Collectors.toSet()));
         }
     }
 
@@ -49,7 +52,9 @@ public class SecurityDAO implements ISecurityDAO {
         try (EntityManager em = getEntityManager()) {
             User userEntity = em.find(User.class, email);
             if (userEntity != null)
-                throw new EntityExistsException("User with email: " + email + " already exists");
+                throw new dat.security.exceptions.ApiException(
+                        409,
+                        "User with email: " + email + " already exists");
             userEntity = new User(email, password);
             em.getTransaction().begin();
             Role userRole = em.find(Role.class, "user");
@@ -60,6 +65,8 @@ public class SecurityDAO implements ISecurityDAO {
             em.persist(userEntity);
             em.getTransaction().commit();
             return userEntity;
+        } catch (ApiException e) {
+            throw e;
         } catch (Exception e) {
             e.printStackTrace();
             throw new ApiException(400, e.getMessage());
@@ -81,6 +88,51 @@ public class SecurityDAO implements ISecurityDAO {
             user.addRole(role);
             em.getTransaction().commit();
             return user;
+        }
+    }
+
+    @Override
+    public List<AuthUserDTO> getAllUsers() {
+        try (EntityManager em = getEntityManager()) {
+            List<User> users = em.createQuery("SELECT u FROM User u", User.class).getResultList();
+            return users.stream()
+                    .map(u -> new AuthUserDTO(u.getEmail(), u.getRoles().stream().map(r -> r.getRoleName()).collect(Collectors.toSet())))
+                    .collect(Collectors.toList());
+        }
+    }
+
+    @Override
+    public AuthUserDTO getByEmail(String email) {
+        try (EntityManager em = getEntityManager()) {
+            User user = em.find(User.class, email);
+            if (user == null)
+                throw new EntityNotFoundException("No user found with email: " + email);
+            user.getRoles().size();
+            return new AuthUserDTO(user.getEmail(), user.getRoles().stream().map(r -> r.getRoleName()).collect(Collectors.toSet()));
+        }
+    }
+
+    @Override
+    public void updateUser(String email, String newPassword) {
+        try (EntityManager em = getEntityManager()) {
+            User user = em.find(User.class, email);
+            if (user == null)
+                throw new EntityNotFoundException("No user found with email: " + email);
+            em.getTransaction().begin();
+            user.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
+            em.getTransaction().commit();
+        }
+    }
+
+    @Override
+    public void deleteUser(String email) {
+        try (EntityManager em = getEntityManager()) {
+            User user = em.find(User.class, email);
+            if (user == null)
+                throw new EntityNotFoundException("No user found with email: " + email);
+            em.getTransaction().begin();
+            em.remove(user);
+            em.getTransaction().commit();
         }
     }
 }

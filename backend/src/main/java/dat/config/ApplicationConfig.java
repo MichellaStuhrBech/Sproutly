@@ -34,7 +34,8 @@ public class ApplicationConfig {
         config.router.apiBuilder(SecurityRoutes.getSecurityRoutes());
     }
 
-    public static Javalin startServer(int port) {
+    /** Creates app with full config and handlers but does not start it. Use for tests. */
+    public static Javalin createApp() {
         Javalin app = Javalin.create(ApplicationConfig::configuration);
 
         app.beforeMatched(accessController::accessHandler);
@@ -57,6 +58,11 @@ public class ApplicationConfig {
             ctx.json(new ApiException(400, "Check JSON fields and values."));
         });
 
+        return app;
+    }
+
+    public static Javalin startServer(int port) {
+        Javalin app = createApp();
         app.start(port);
         return app;
     }
