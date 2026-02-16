@@ -27,10 +27,11 @@ public class AddToToDoListIntegrationTest {
 
     @BeforeEach
     public void setUp() {
-        // Clean database before each test
+        // Clean database before each test (tasks first due to FK to users)
         EntityManager em = emf.createEntityManager();
         try {
             em.getTransaction().begin();
+            em.createQuery("DELETE FROM Task").executeUpdate();
             em.createNativeQuery("DELETE FROM user_roles").executeUpdate();
             em.createQuery("DELETE FROM User").executeUpdate();
             em.getTransaction().commit();

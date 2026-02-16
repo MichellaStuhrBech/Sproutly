@@ -1,53 +1,38 @@
 package dat.daos.impl;
 
-import dat.daos.IDAO;
-import dat.dtos.TaskDTO;
-import dat.exceptions.ApiException;
+import dat.entities.Task;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-
-@NoArgsConstructor(access = AccessLevel.PUBLIC)
-public class TaskDAO implements IDAO<TaskDTO, Integer> {
+public class TaskDAO {
 
     private static TaskDAO instance;
     private static EntityManagerFactory emf;
     private static final Logger logger = LoggerFactory.getLogger(TaskDAO.class);
 
-
-    @Override
-    public TaskDTO read(Integer integer) throws ApiException {
-        return null;
+    public static TaskDAO getInstance(EntityManagerFactory _emf) {
+        if (instance == null) {
+            emf = _emf;
+            instance = new TaskDAO();
+        }
+        return instance;
     }
 
-    @Override
-    public List<TaskDTO> readAll() throws ApiException {
-        return List.of();
+    private EntityManager getEntityManager() {
+        return emf.createEntityManager();
     }
 
-    @Override
-    public TaskDTO create(TaskDTO taskDTO) throws ApiException {
-        try (EntityManager em = emf.createEntityManager()) {
+    public Task create(Task task) {
+        try (EntityManager em = getEntityManager()) {
             em.getTransaction().begin();
-            em.persist(taskDTO);
+            em.persist(task);
             em.getTransaction().commit();
-            return taskDTO;
+            return task;
+        } catch (Exception e) {
+            logger.error("Create task failed", e);
+            throw new dat.security.exceptions.ApiException(400, e.getMessage());
         }
     }
-
-    @Override
-    public TaskDTO update(Integer integer, TaskDTO taskDTO) throws ApiException {
-        return null;
-    }
-
-    @Override
-    public void delete(Integer integer) throws ApiException {
-
-    }
-
 }

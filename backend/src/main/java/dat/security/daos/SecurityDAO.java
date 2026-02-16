@@ -113,6 +113,16 @@ public class SecurityDAO implements ISecurityDAO {
     }
 
     @Override
+    public User getUserByEmail(String email) {
+        try (EntityManager em = getEntityManager()) {
+            User user = em.find(User.class, email);
+            if (user == null)
+                throw new EntityNotFoundException("No user found with email: " + email);
+            return user;
+        }
+    }
+
+    @Override
     public void updateUser(String email, String newPassword) {
         try (EntityManager em = getEntityManager()) {
             User user = em.find(User.class, email);

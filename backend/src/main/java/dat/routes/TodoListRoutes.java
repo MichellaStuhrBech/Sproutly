@@ -12,9 +12,8 @@ public class TodoListRoutes {
     private final TaskController taskController = new TaskController();
 
     protected EndpointGroup getRoutes() {
-
         return () -> {
-            post("/api/tasks", taskController::create, Role.ANYONE);
+            post("/", taskController::create, Role.USER);
         };
     }
 }
