@@ -38,7 +38,7 @@ function LoginPage() {
         return
       }
 
-      setError(data.msg || 'Login failed. Check your email and password.')
+      setError(res.status === 401 ? 'Email or password is incorrect.' : (data.msg || 'Email or password is incorrect.'))
     } catch (err) {
       setError('Could not reach the server. Is the backend running?')
     } finally {

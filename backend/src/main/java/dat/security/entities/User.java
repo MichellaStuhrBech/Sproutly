@@ -28,13 +28,13 @@ public class User implements Serializable, ISecurityUser {
 
     @Id
     @Basic(optional = false)
-    @Column(name = "email", length = 255)
+    @Column(name = "username", length = 255)  // DB column name; stores the user's email
     private String email;
     @Basic(optional = false)
     @Column(name = "password")
     private String password;
 
-    @JoinTable(name = "user_roles", joinColumns = {@JoinColumn(name = "user_name", referencedColumnName = "email")}, inverseJoinColumns = {@JoinColumn(name = "role_name", referencedColumnName = "name")})
+    @JoinTable(name = "user_roles", joinColumns = {@JoinColumn(name = "user_name", referencedColumnName = "username")}, inverseJoinColumns = {@JoinColumn(name = "role_name", referencedColumnName = "name")})
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private Set<Role> roles = new HashSet<>();
 

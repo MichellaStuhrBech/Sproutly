@@ -21,7 +21,7 @@ public class Task {
     private String notes;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_email", referencedColumnName = "email", nullable = false)
+    @JoinColumn(name = "user_email", referencedColumnName = "username", nullable = false)
     private User user;
 
     public Task() {
