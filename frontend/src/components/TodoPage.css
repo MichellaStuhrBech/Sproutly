@@ -101,6 +101,22 @@
   margin: 0 0 1.5rem;
 }
 
+.todo-error {
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.9375rem;
+  color: #b91c1c;
+  background-color: #fef2f2;
+  border-radius: 10px;
+  border: 1px solid #fecaca;
+}
+
+.todo-loading {
+  font-size: 0.9375rem;
+  color: #5c5c5c;
+  margin: 0 0 1rem;
+}
+
 .todo-add-form {
   display: flex;
   gap: 0.75rem;
@@ -152,6 +168,11 @@
 
 .todo-add-btn:active {
   transform: scale(0.98);
+}
+
+.todo-add-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .todo-add-icon {

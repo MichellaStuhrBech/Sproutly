@@ -6,6 +6,8 @@ import jakarta.persistence.EntityManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 public class TaskDAO {
 
     private static TaskDAO instance;
@@ -33,6 +35,14 @@ public class TaskDAO {
         } catch (Exception e) {
             logger.error("Create task failed", e);
             throw new dat.security.exceptions.ApiException(400, e.getMessage());
+        }
+    }
+
+    public List<Task> findByUserEmail(String email) {
+        try (EntityManager em = getEntityManager()) {
+            return em.createQuery("SELECT t FROM Task t WHERE t.user.email = :email ORDER BY t.id", Task.class)
+                    .setParameter("email", email)
+                    .getResultList();
         }
     }
 }

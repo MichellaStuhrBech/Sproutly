@@ -13,6 +13,7 @@ public class TodoListRoutes {
 
     protected EndpointGroup getRoutes() {
         return () -> {
+            get("/", taskController::getAll, Role.USER);
             post("/", taskController::create, Role.USER);
         };
     }
