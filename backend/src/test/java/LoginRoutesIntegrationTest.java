@@ -2,7 +2,6 @@ package dat;
 
 import dat.config.ApplicationConfig;
 import dat.config.HibernateConfig;
-import io.javalin.Javalin;
 import io.javalin.testtools.JavalinTest;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -116,7 +115,6 @@ public class LoginRoutesIntegrationTest {
     @Test
     void protectedEndpoint_withoutToken_returns401() {
         JavalinTest.test(ApplicationConfig.createApp(), (server, client) -> {
-            // Replace with a real protected endpoint in your project
             var res = client.get("/api/protected/user_demo");
             assertEquals(401, res.code(), "Expected 401 when calling protected endpoint without token");
         });
