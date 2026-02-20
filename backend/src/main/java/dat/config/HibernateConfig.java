@@ -1,5 +1,7 @@
 package dat.config;
 
+import dat.entities.Plant;
+import dat.entities.SowingPlan;
 import dat.entities.Task;
 import dat.security.entities.Role;
 import dat.security.entities.User;
@@ -45,6 +47,9 @@ public class HibernateConfig {
         configuration.addAnnotatedClass(User.class);
         configuration.addAnnotatedClass(Role.class);
         configuration.addAnnotatedClass(Task.class);
+        configuration.addAnnotatedClass(SowingPlan.class);
+        configuration.addAnnotatedClass(Plant.class);
+
     }
 
     private static EntityManagerFactory createEMF(boolean forTest) {
