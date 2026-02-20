@@ -4,10 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nimbusds.jose.JOSEException;
 import dat.config.HibernateConfig;
-import dat.dtos.AuthUserDTO;
-import dat.dtos.UserDTO;
+import dat.security.dto.AuthUserDTO;
 import dat.security.daos.ISecurityDAO;
 import dat.security.daos.SecurityDAO;
+import dat.security.dto.UserDTO;
 import dat.security.entities.User;
 import dat.security.exceptions.ApiException;
 import dat.security.exceptions.NotAuthorizedException;
@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 
 /**
  * Purpose: To handle security in the API
- * Author: Thomas Hartmann
  */
 public class SecurityController implements ISecurityController {
     ObjectMapper objectMapper = new ObjectMapper();
@@ -74,21 +73,22 @@ public class SecurityController implements ISecurityController {
 
     @Override
     public Handler register() {
-        return (ctx) -> {
+        return ctx -> {
             ObjectNode returnObject = objectMapper.createObjectNode();
             try {
-                UserDTO userInput = ctx.bodyAsClass(UserDTO.class);
+                dat.security.dto.UserDTO userInput = ctx.bodyAsClass(dat.security.dto.UserDTO.class);
+
                 User created = securityDAO.createUser(userInput.getEmail(), userInput.getPassword());
 
                 String token = createToken(new AuthUserDTO(created.getEmail(), Set.of("USER")));
                 ctx.status(HttpStatus.CREATED).json(returnObject
                         .put("token", token)
                         .put("email", created.getEmail()));
-            } catch (EntityExistsException e) {
-            throw new dat.security.exceptions.ApiException(409, "User already exists");
-        }
 
-    };
+            } catch (EntityExistsException e) {
+                throw new dat.security.exceptions.ApiException(409, "User already exists");
+            }
+        };
     }
 
     @Override

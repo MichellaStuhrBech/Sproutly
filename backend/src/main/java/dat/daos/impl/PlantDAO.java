@@ -7,31 +7,23 @@ import java.util.List;
 
 public class PlantDAO {
 
+    private final EntityManagerFactory emf;
 
-    private final EntityManagerFactory emf =
-            HibernateConfig.getEntityManagerFactory();
+    public PlantDAO(EntityManagerFactory emf) {
+        this.emf = emf;
+    }
 
     public Plant save(Plant plant) {
-        EntityManager em = emf.createEntityManager();
-
-        try {
+        try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
 
-            if (plant.getId() == null) {
-                em.persist(plant);
-            } else {
-                plant = em.merge(plant);
-            }
+            if (plant.getId() == null) em.persist(plant);
+            else plant = em.merge(plant);
 
             em.getTransaction().commit();
             return plant;
-
         } catch (Exception e) {
-            if (em.getTransaction().isActive())
-                em.getTransaction().rollback();
             throw e;
-        } finally {
-            em.close();
         }
     }
 

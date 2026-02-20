@@ -3,18 +3,19 @@ GET {{url}}/auth/test/
 
 ### Create a new user - this one will only get a USER role by default
 POST {{url}}/auth/register/
+Content-Type: application/json
 
 {
-    "username": "useronly",
-    "password": "123"
+    "email": "useronly@test.dk",
+    "password": "123456"
 }
 
 ###
 POST {{url}}/auth/login/
 
 {
-    "username": "user",
-    "password": "test123"
+    "email": "useronly@test.dk",
+    "password": "123456"
 }
 
 > {%

@@ -1,6 +1,6 @@
 package dat.security.controllers;
 
-import dat.dtos.AuthUserDTO;
+import dat.security.dto.AuthUserDTO;
 import io.javalin.http.Handler;
 import io.javalin.security.RouteRole;
 
@@ -8,7 +8,6 @@ import java.util.Set;
 
 /**
  * Purpose: To handle security in the API
- * Author: Thomas Hartmann
  */
 public interface ISecurityController {
     Handler login(); // to get a token

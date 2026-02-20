@@ -1,4 +1,4 @@
-package dat.dtos;
+package dat.security.dto;
 
 import java.util.Set;
 

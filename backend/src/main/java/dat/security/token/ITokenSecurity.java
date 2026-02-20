@@ -1,6 +1,6 @@
 package dat.security.token;
 
-import dat.dtos.AuthUserDTO;
+import dat.security.dto.AuthUserDTO;
 
 public interface ITokenSecurity {
     String createToken(AuthUserDTO user, String issuer, String tokenExpireTime, String secretKey) throws Exception;
