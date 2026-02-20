@@ -57,11 +57,12 @@ public class PlantController {
 
         SowingPlan plan = sowingPlanDAO.findOrCreateByUser(user);
 
-        List<Plant> plants = plan.getPlants().stream()
+        List<PlantDTO> dtos = plan.getPlants().stream()
                 .sorted(Comparator.comparingInt(Plant::getSowingMonth))
+                .map(PlantDTO::new)
                 .toList();
 
-        ctx.status(201).json(new PlantDTO(plants));
+        ctx.json(dtos);
     }
 
 }
