@@ -31,9 +31,10 @@ public class PlantController {
     }
 
     public void addPlant(Context ctx) {
+        System.out.println("AUTH USER = " + ctx.attribute("user"));
 
         AuthUserDTO authUser = ctx.attribute("user");
-        User user = userDAO.findByEmail(authUser.getEmail());
+        User user = userDAO.getUserByEmail(authUser.getEmail());
 
         SowingPlan plan = sowingPlanDAO.findOrCreateByUser(user);
 
@@ -47,12 +48,12 @@ public class PlantController {
 
         plantDAO.save(plant);
 
-        ctx.status(201).json(plant);
+        ctx.status(201).json(new PlantDTO(plant));
     }
 
     public void getPlants(Context ctx) {
         AuthUserDTO authUser = ctx.attribute("user");
-        User user = userDAO.findByEmail(authUser.getEmail());
+        User user = userDAO.getUserByEmail(authUser.getEmail());
 
         SowingPlan plan = sowingPlanDAO.findOrCreateByUser(user);
 
@@ -60,7 +61,7 @@ public class PlantController {
                 .sorted(Comparator.comparingInt(Plant::getSowingMonth))
                 .toList();
 
-        ctx.json(plants);
+        ctx.status(201).json(new PlantDTO(plants));
     }
 
 }

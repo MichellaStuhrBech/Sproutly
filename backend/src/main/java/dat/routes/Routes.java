@@ -1,5 +1,6 @@
 package dat.routes;
 
+import dat.config.HibernateConfig;
 import io.javalin.apibuilder.EndpointGroup;
 import jakarta.persistence.EntityManagerFactory;
 
@@ -8,7 +9,7 @@ import static io.javalin.apibuilder.ApiBuilder.path;
 
 public class Routes {
 
-    EntityManagerFactory emf;
+    private final EntityManagerFactory emf = HibernateConfig.getEntityManagerFactory();
     private final TodoListRoutes todoListRoutes = new TodoListRoutes();
     private final SowingListRoutes sowingListRoutes = new SowingListRoutes(emf);
 
