@@ -12,6 +12,7 @@ public interface ISecurityDAO {
     User addRole(AuthUserDTO user, String newRole);
     List<AuthUserDTO> getAllUsers();
     AuthUserDTO getByEmail(String email);
+    User getUserByEmail(String email);
     void updateUser(String email, String newPassword);
     void deleteUser(String email);
 }
