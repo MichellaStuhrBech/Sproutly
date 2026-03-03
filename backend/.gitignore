@@ -30,3 +30,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Secrets (tokens, keys) ###
+src/main/resources/config.properties

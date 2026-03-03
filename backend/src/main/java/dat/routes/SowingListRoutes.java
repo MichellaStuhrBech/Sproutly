@@ -18,6 +18,7 @@ public class SowingListRoutes {
     protected EndpointGroup getRoutes() {
         return () -> {
             get("/", plantController::getPlants, Role.USER);
+            get("/search", plantController::searchPlants, Role.USER);
             post("/", plantController::addPlant, Role.USER);
         };
     }

@@ -3,26 +3,25 @@ package dat.controllers;
 import dat.daos.impl.PlantDAO;
 import dat.daos.impl.SowingPlanDAO;
 import dat.dtos.PlantDTO;
+import dat.dtos.TreflePlantDTO;
 import dat.entities.Plant;
 import dat.entities.SowingPlan;
 import dat.security.daos.SecurityDAO;
 import dat.security.dto.AuthUserDTO;
 import dat.security.entities.User;
+import dat.services.TrefleService;
 import io.javalin.http.Context;
 import jakarta.persistence.EntityManagerFactory;
-
 
 import java.util.Comparator;
 import java.util.List;
 
 public class PlantController {
 
-
-
-    private PlantDAO plantDAO;
-    private SowingPlanDAO sowingPlanDAO;
-    private SecurityDAO userDAO;
-
+    private final PlantDAO plantDAO;
+    private final SowingPlanDAO sowingPlanDAO;
+    private final SecurityDAO userDAO;
+    private final TrefleService trefleService = new TrefleService();
 
     public PlantController(EntityManagerFactory emf) {
         this.userDAO = new SecurityDAO(emf);
@@ -63,6 +62,12 @@ public class PlantController {
                 .toList();
 
         ctx.json(dtos);
+    }
+
+    public void searchPlants(Context ctx) {
+        String q = ctx.queryParam("q");
+        List<TreflePlantDTO> suggestions = trefleService.search(q);
+        ctx.json(suggestions);
     }
 
 }
