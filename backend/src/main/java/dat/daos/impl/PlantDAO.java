@@ -39,6 +39,17 @@ public class PlantDAO {
         }
     }
 
+    public List<Plant> findByUserEmailSorted(String email) {
+        try (EntityManager em = emf.createEntityManager()) {
+            return em.createQuery(
+                            "select p from Plant p where p.sowingPlan.user.email = :email " +
+                                    "order by p.sowingMonth asc, p.name asc",
+                            Plant.class)
+                    .setParameter("email", email)
+                    .getResultList();
+        }
+    }
+
     public void delete(Long id) {
         EntityManager em = emf.createEntityManager();
         try {

@@ -52,15 +52,13 @@ public class PlantController {
 
     public void getPlants(Context ctx) {
         AuthUserDTO authUser = ctx.attribute("user");
-        User user = userDAO.getUserByEmail(authUser.getEmail());
-
-        SowingPlan plan = sowingPlanDAO.findOrCreateByUser(user);
-
-        List<PlantDTO> dtos = plan.getPlants().stream()
-                .sorted(Comparator.comparingInt(Plant::getSowingMonth))
+        if (authUser == null) {
+            ctx.status(401).json("{\"msg\": \"You must be logged in to view plants\"}");
+            return;
+        }
+        List<PlantDTO> dtos = plantDAO.findByUserEmailSorted(authUser.getEmail()).stream()
                 .map(PlantDTO::new)
                 .toList();
-
         ctx.json(dtos);
     }
 

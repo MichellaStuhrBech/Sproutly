@@ -38,7 +38,7 @@ function SowingPage() {
       const data = await res.json()
       setPlants(Array.isArray(data) ? data : [])
     } catch {
-      setPlants([])
+      setPlants((prev) => (prev.length > 0 ? prev : []))
     } finally {
       setLoading(false)
     }
