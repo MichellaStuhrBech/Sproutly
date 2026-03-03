@@ -123,12 +123,14 @@ function SowingPage() {
         setAddError(err.msg || err.message || 'Failed to add plant.')
         return
       }
+      const created = await res.json()
       setShowAddForm(false)
       setSearchQuery('')
       setSelectedName('')
       setSelectedLatinName('')
       setSowingMonth(3)
-      loadPlants()
+      setPlants((prev) => [...prev, created])
+      await loadPlants()
     } catch {
       setAddError('Could not add plant.')
     } finally {
