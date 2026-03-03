@@ -78,11 +78,18 @@ function SowingPage() {
     return () => clearTimeout(t)
   }, [searchQuery, token])
 
-  const handleSelectSuggestion = (commonName, scientificName) => {
-    setSelectedName(commonName || '')
-    setSelectedLatinName(scientificName || '')
+  const getSuggestionDisplayName = (s) =>
+    s.commonName ?? s.common_name ?? s.scientificName ?? s.scientific_name ?? 'Unknown'
+  const getSuggestionLatinName = (s) =>
+    s.scientificName ?? s.scientific_name ?? ''
+
+  const handleSelectSuggestion = (s) => {
+    const displayName = getSuggestionDisplayName(s)
+    const latinName = getSuggestionLatinName(s)
+    setSelectedName(displayName)
+    setSelectedLatinName(latinName)
     setSuggestions([])
-    setSearchQuery(commonName || '')
+    setSearchQuery(displayName)
   }
 
   const handleSubmitAdd = async (e) => {
@@ -200,16 +207,14 @@ function SowingPage() {
                       key={s.id}
                       role="option"
                       className="sowing-suggestion-item"
-                      onClick={() =>
-                        handleSelectSuggestion(s.commonName, s.scientificName)
-                      }
+                      onClick={() => handleSelectSuggestion(s)}
                     >
                       <span className="sowing-suggestion-common">
-                        {s.commonName || s.scientificName || 'Unknown'}
+                        {getSuggestionDisplayName(s)}
                       </span>
-                      {s.scientificName && (
+                      {getSuggestionLatinName(s) && (
                         <span className="sowing-suggestion-latin">
-                          {s.scientificName}
+                          {getSuggestionLatinName(s)}
                         </span>
                       )}
                     </li>
