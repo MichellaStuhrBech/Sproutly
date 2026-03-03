@@ -27,6 +27,7 @@ import lombok.Setter;
         @Column(length = 2000)
         private String note;
 
+        @Column(nullable = false, columnDefinition = "boolean not null default false")
         private boolean completed;
 
         @ManyToOne

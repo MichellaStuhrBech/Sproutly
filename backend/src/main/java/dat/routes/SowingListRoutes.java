@@ -20,8 +20,8 @@ public class SowingListRoutes {
             get("/", plantController::getPlants, Role.USER);
             get("/search", plantController::searchPlants, Role.USER);
             post("/", plantController::addPlant, Role.USER);
-            put("/:id", plantController::updatePlant, Role.USER);
-            delete("/:id", plantController::deletePlant, Role.USER);
+            put("/{id}", plantController::updatePlant, Role.USER);
+            delete("/{id}", plantController::deletePlant, Role.USER);
         };
     }
 
