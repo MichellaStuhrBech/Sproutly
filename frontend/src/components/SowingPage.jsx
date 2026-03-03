@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import logo from '../logo/logo.png'
 import './SowingPage.css'
@@ -20,6 +20,7 @@ function SowingPage() {
   const [sowingMonth, setSowingMonth] = useState(3)
   const [addError, setAddError] = useState('')
   const [adding, setAdding] = useState(false)
+  const skipSearchRef = useRef(false)
 
   const loadPlants = useCallback(async () => {
     if (!token) return
@@ -56,6 +57,10 @@ function SowingPage() {
       setSuggestions([])
       return
     }
+    if (skipSearchRef.current) {
+      skipSearchRef.current = false
+      return
+    }
     const t = setTimeout(async () => {
       setSuggestionsLoading(true)
       try {
@@ -86,6 +91,7 @@ function SowingPage() {
   const handleSelectSuggestion = (s) => {
     const displayName = getSuggestionDisplayName(s)
     const latinName = getSuggestionLatinName(s)
+    skipSearchRef.current = true
     setSelectedName(displayName)
     setSelectedLatinName(latinName)
     setSuggestions([])
