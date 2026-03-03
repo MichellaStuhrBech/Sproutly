@@ -24,10 +24,13 @@ import lombok.Setter;
 
         private int sowingMonth; // 1-12
 
+        @Column(length = 2000)
+        private String note;
+
+        private boolean completed;
+
         @ManyToOne
         @JoinColumn(name = "sowing_plan_id")
         private SowingPlan sowingPlan;
 
-
-
-}
+    }

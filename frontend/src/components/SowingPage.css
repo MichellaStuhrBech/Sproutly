@@ -177,12 +177,105 @@
   height: 18px;
 }
 
+.sowing-card-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.sowing-card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.sowing-card-checkbox {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  margin-top: 0.125rem;
+  padding: 0;
+  border: 2px solid #5a7c58;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #5a7c58;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.sowing-card-checkbox:hover {
+  background: #f5f7f0;
+}
+
+.sowing-card-checkbox svg {
+  width: 16px;
+  height: 16px;
+}
+
+.sowing-card-checkbox-empty {
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+}
+
+.sowing-card--completed .sowing-card-name,
+.sowing-card--completed .sowing-card-latin {
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
 .sowing-card-name {
   font-size: 1.125rem;
   font-weight: 700;
   color: #2d4a2a;
-  margin: 0 0 0.75rem;
+  margin: 0 0 0.25rem;
   padding-right: 2rem;
+}
+
+.sowing-card-date-row,
+.sowing-card-note-row {
+  margin-top: 0.75rem;
+}
+
+.sowing-card-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #5a7c58;
+  margin-bottom: 0.25rem;
+}
+
+.sowing-card-month-select {
+  padding: 0.4rem 0.6rem;
+  font-size: 0.875rem;
+  font-family: inherit;
+  border: 1px solid #c5d4c2;
+  border-radius: 6px;
+  background: #fff;
+  color: #213547;
+  min-width: 8rem;
+}
+
+.sowing-card-note-input {
+  width: 100%;
+  padding: 0.5rem 0.6rem;
+  font-size: 0.875rem;
+  font-family: inherit;
+  border: 1px solid #c5d4c2;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+.sowing-card-note-input::placeholder {
+  color: #9ca3af;
+}
+
+.sowing-card-note-input:focus {
+  outline: none;
+  border-color: #5a7c58;
 }
 
 .sowing-card-date {

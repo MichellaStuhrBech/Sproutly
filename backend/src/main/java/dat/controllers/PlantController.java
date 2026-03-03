@@ -68,4 +68,41 @@ public class PlantController {
         ctx.json(suggestions);
     }
 
+    public void updatePlant(Context ctx) {
+        AuthUserDTO authUser = ctx.attribute("user");
+        if (authUser == null) {
+            ctx.status(401).json("{\"msg\": \"You must be logged in to update a plant\"}");
+            return;
+        }
+        Long plantId = Long.valueOf(ctx.pathParam("id"));
+        var opt = plantDAO.findByUserEmailAndId(authUser.getEmail(), plantId);
+        if (opt.isEmpty()) {
+            ctx.status(404).json("{\"msg\": \"Plant not found\"}");
+            return;
+        }
+        Plant plant = opt.get();
+        PlantDTO dto = ctx.bodyAsClass(PlantDTO.class);
+        plant.setSowingMonth(dto.getSowingMonth());
+        plant.setNote(dto.getNote());
+        plant.setCompleted(dto.isCompleted());
+        plantDAO.save(plant);
+        ctx.json(new PlantDTO(plant));
+    }
+
+    public void deletePlant(Context ctx) {
+        AuthUserDTO authUser = ctx.attribute("user");
+        if (authUser == null) {
+            ctx.status(401).json("{\"msg\": \"You must be logged in to delete a plant\"}");
+            return;
+        }
+        Long plantId = Long.valueOf(ctx.pathParam("id"));
+        var opt = plantDAO.findByUserEmailAndId(authUser.getEmail(), plantId);
+        if (opt.isEmpty()) {
+            ctx.status(404).json("{\"msg\": \"Plant not found\"}");
+            return;
+        }
+        plantDAO.delete(plantId);
+        ctx.status(204);
+    }
+
 }

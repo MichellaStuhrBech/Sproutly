@@ -144,6 +144,31 @@ function SowingPage() {
     }
   }
 
+  const handleUpdate = async (plant, updates) => {
+    const next = { ...plant, ...updates }
+    setPlants((prev) => prev.map((p) => (p.id === plant.id ? next : p)))
+    try {
+      const res = await fetch(`${API_BASE}/sowinglist/${plant.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          id: next.id,
+          name: next.name,
+          latinName: next.latinName ?? '',
+          sowingMonth: next.sowingMonth,
+          note: next.note ?? '',
+          completed: next.completed ?? false,
+        }),
+      })
+      if (!res.ok) setPlants((prev) => prev.map((p) => (p.id === plant.id ? plant : p)))
+    } catch {
+      setPlants((prev) => prev.map((p) => (p.id === plant.id ? plant : p)))
+    }
+  }
+
   const handleDelete = async (id) => {
     if (!token) return
     try {
@@ -276,7 +301,10 @@ function SowingPage() {
               <li className="sowing-empty">No plants yet. Add one above.</li>
             ) : (
               plants.map((plant) => (
-                <li key={plant.id} className="sowing-card">
+                <li
+                  key={plant.id}
+                  className={`sowing-card ${plant.completed ? 'sowing-card--completed' : ''}`}
+                >
                   <button
                     type="button"
                     className="sowing-card-delete"
@@ -298,16 +326,65 @@ function SowingPage() {
                       <line x1="14" y1="11" x2="14" y2="17" />
                     </svg>
                   </button>
-                  <h3 className="sowing-card-name">{plant.name}</h3>
-                  {plant.latinName && (
-                    <p className="sowing-card-latin">{plant.latinName}</p>
-                  )}
-                  <p className="sowing-card-date">
-                    <span className="sowing-card-icon" aria-hidden>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                    </span>
-                    Sowing: {MONTHS[plant.sowingMonth] || plant.sowingMonth}
-                  </p>
+                  <div className="sowing-card-row">
+                    <button
+                      type="button"
+                      className="sowing-card-checkbox"
+                      onClick={() => handleUpdate(plant, { completed: !plant.completed })}
+                      aria-label={plant.completed ? 'Mark not done' : 'Mark done'}
+                      aria-pressed={plant.completed}
+                    >
+                      {plant.completed ? (
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                        </svg>
+                      ) : (
+                        <span className="sowing-card-checkbox-empty" />
+                      )}
+                    </button>
+                    <div className="sowing-card-body">
+                      <h3 className="sowing-card-name">{plant.name}</h3>
+                      {plant.latinName && (
+                        <p className="sowing-card-latin">{plant.latinName}</p>
+                      )}
+                      <div className="sowing-card-date-row">
+                        <label className="sowing-card-label">Sowing month</label>
+                        <select
+                          className="sowing-card-month-select"
+                          value={plant.sowingMonth ?? 1}
+                          onChange={(e) =>
+                            handleUpdate(plant, { sowingMonth: Number(e.target.value) })
+                          }
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {MONTHS.slice(1).map((m, i) => (
+                            <option key={i} value={i + 1}>
+                              {m}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="sowing-card-note-row">
+                        <label className="sowing-card-label">Note (e.g. date sowed)</label>
+                        <input
+                          type="text"
+                          className="sowing-card-note-input"
+                          placeholder="e.g. Sowed 15 March 2026"
+                          value={plant.note ?? ''}
+                          onChange={(e) =>
+                            setPlants((prev) =>
+                              prev.map((p) =>
+                                p.id === plant.id ? { ...p, note: e.target.value } : p
+                              )
+                            )
+                          }
+                          onBlur={(e) =>
+                            handleUpdate(plant, { note: e.target.value.trim() })
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </li>
               ))
             )}
