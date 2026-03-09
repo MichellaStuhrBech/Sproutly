@@ -44,6 +44,26 @@
   margin: 0 0 1.5rem;
 }
 
+.login-success {
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.9375rem;
+  color: #166534;
+  background-color: #f0fdf4;
+  border-radius: 10px;
+  border: 1px solid #bbf7d0;
+}
+
+.login-error {
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.9375rem;
+  color: #b91c1c;
+  background-color: #fef2f2;
+  border-radius: 10px;
+  border: 1px solid #fecaca;
+}
+
 .login-form {
   display: flex;
   flex-direction: column;
