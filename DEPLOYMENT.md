@@ -61,6 +61,38 @@ To add a real deployment (e.g. Railway, Render, Fly.io):
 - **Option B – Static host (e.g. Vercel, Netlify):**  
   Deploy the contents of `frontend/dist/`. Set the backend API URL via your host’s env (e.g. Vite’s `VITE_API_URL`) and ensure the frontend uses it for API calls instead of `/api` if the backend is on another origin.
 
+## Digital Ocean App Platform
+
+To deploy the **backend** (JAR) on Digital Ocean:
+
+### Build the JAR
+
+From the project root:
+
+```bash
+cd backend
+mvn clean package -DskipTests
+```
+
+Or run **`backend/build-jar.ps1`** (Windows) or **`backend/build-jar.sh`** (Linux/Mac). The runnable JAR is **`backend/target/sproutly-backend.jar`**.
+
+### App Platform
+
+1. Connect your GitHub repo.
+2. **Build command:** `cd backend && mvn clean package -DskipTests`
+3. **Run command:** `java -jar backend/target/sproutly-backend.jar`
+4. **HTTP port:** **7070**
+5. **Environment variables:** Add all production vars (see table above): `DEPLOYED`, `DB_NAME`, `CONNECTION_STR`, `DB_USERNAME`, `DB_PASSWORD`, `SECRET_KEY`, `ISSUER`, `TOKEN_EXPIRE_TIME`, and optionally `OPENAI_API_KEY`, `PERENUAL_API_KEY`, `TREFLE_TOKEN`.
+6. Add a PostgreSQL database and use its connection details for the DB env vars.
+
+### Droplet (manual)
+
+1. Copy `sproutly-backend.jar` to the Droplet. Install Java 17: `sudo apt install openjdk-17-jre-headless -y`
+2. Set env vars (e.g. in a `.env` or start script). Run: `java -jar sproutly-backend.jar`
+3. Expose port 7070 (firewall or reverse proxy).
+
+---
+
 ## Required GitHub setup
 
 - **Secrets** (for deployment): add any API keys or DB URLs as repository **Secrets** and reference them in the workflow (e.g. `${{ secrets.OPENAI_API_KEY }}`). Do not commit them.
