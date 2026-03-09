@@ -9,8 +9,11 @@ import jakarta.persistence.NoResultException;
 
 public class SowingPlanDAO {
 
-        private final EntityManagerFactory emf =
-                HibernateConfig.getEntityManagerFactory();
+    private final EntityManagerFactory emf;
+
+    public SowingPlanDAO(EntityManagerFactory emf) {
+        this.emf = emf;
+    }
 
         public SowingPlan findById(Long id) {
             try (EntityManager em = emf.createEntityManager()) {
@@ -21,50 +24,41 @@ public class SowingPlanDAO {
         public SowingPlan findByUser(User user) {
             try (EntityManager em = emf.createEntityManager()) {
                 return em.createQuery(
-                                "select sp from SowingPlan sp where sp.user.id = :uid",
+                                "select sp from SowingPlan sp where sp.user.email = :email",
                                 SowingPlan.class)
-                        .setParameter("uid", user.getId())
+                        .setParameter("email", user.getEmail())
                         .getSingleResult();
             } catch (NoResultException e) {
                 return null;
             }
         }
 
-        public SowingPlan findOrCreateByUser(User user) {
+    public SowingPlan findOrCreateByUser(User user) {
+        try (EntityManager em = emf.createEntityManager()) {
 
-            EntityManager em = emf.createEntityManager();
+            // READ: ingen transaction
             try {
+                return em.createQuery(
+                                "select sp from SowingPlan sp where sp.user.email = :email",
+                                SowingPlan.class)
+                        .setParameter("email", user.getEmail())
+                        .getSingleResult();
+
+            } catch (NoResultException e) {
+
+                // WRITE: transaction her
                 em.getTransaction().begin();
 
-                SowingPlan plan;
-                try {
-                    plan = em.createQuery(
-                                    "select sp from SowingPlan sp where sp.user.id = :uid",
-                                    SowingPlan.class)
-                            .setParameter("uid", user.getId())
-                            .getSingleResult();
+                User managedUser = em.find(User.class, user.getEmail());
 
-                    em.getTransaction().commit();
-                    return plan;
+                SowingPlan plan = new SowingPlan();
+                plan.setUser(managedUser);
 
-                } catch (NoResultException e) {
-                    User managedUser = em.find(User.class, user.getId());
+                em.persist(plan);
+                em.getTransaction().commit();
 
-                    plan = new SowingPlan();
-                    plan.setUser(managedUser);
-
-                    em.persist(plan);
-                    em.getTransaction().commit();
-                    return plan;
-                }
-
-            } catch (Exception e) {
-                if (em.getTransaction().isActive())
-                    em.getTransaction().rollback();
-                throw e;
-            } finally {
-                em.close();
+                return plan;
             }
         }
-
+    }
 }

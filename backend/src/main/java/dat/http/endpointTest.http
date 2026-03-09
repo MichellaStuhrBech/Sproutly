@@ -1,0 +1,10 @@
+### Test to add plant
+POST http://localhost:7070/api/sowinglist/
+Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
+
+{
+  "name": "Clover",
+  "latinName": "Trifolium",
+  "sowingMonth": 3
+}

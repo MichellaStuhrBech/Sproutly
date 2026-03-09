@@ -1,0 +1,4 @@
+# Environment and secrets (never commit API keys or tokens)
+.env
+.env.local
+.env.*.local

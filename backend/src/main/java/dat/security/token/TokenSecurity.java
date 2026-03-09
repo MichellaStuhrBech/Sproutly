@@ -5,7 +5,7 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import dat.dtos.AuthUserDTO;
+import dat.security.dto.AuthUserDTO;
 
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;

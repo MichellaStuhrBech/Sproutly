@@ -5,6 +5,7 @@ import CreateAccountPage from './components/CreateAccountPage'
 import DashboardPage from './components/DashboardPage'
 import TodoPage from './components/TodoPage'
 import SowingPage from './components/SowingPage'
+import ChatPage from './components/ChatPage'
 import HelpPage from './components/HelpPage'
 import './App.css'
 
@@ -17,6 +18,7 @@ function App() {
       <Route path="/dashboard" element={<DashboardPage />} />
       <Route path="/todo" element={<TodoPage />} />
       <Route path="/sowing" element={<SowingPage />} />
+      <Route path="/chat" element={<ChatPage />} />
       <Route path="/help" element={<HelpPage />} />
     </Routes>
   )

@@ -1,6 +1,6 @@
 package dat.security.controllers;
 
-import dat.dtos.AuthUserDTO;
+import dat.security.dto.AuthUserDTO;
 import dat.security.enums.Role;
 import io.javalin.http.Context;
 import io.javalin.http.UnauthorizedResponse;
@@ -10,7 +10,6 @@ import java.util.Set;
 
 /**
  * Purpose: To handle security in the API at the route level
- *  Author: Jon Bertelsen
  */
 
 public class AccessController implements IAccessController {

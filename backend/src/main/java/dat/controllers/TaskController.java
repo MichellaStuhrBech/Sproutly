@@ -2,7 +2,7 @@ package dat.controllers;
 
 import dat.config.HibernateConfig;
 import dat.daos.impl.TaskDAO;
-import dat.dtos.AuthUserDTO;
+import dat.security.dto.AuthUserDTO;
 import dat.dtos.TaskDTO;
 import dat.entities.Task;
 import io.javalin.http.Context;

@@ -177,12 +177,105 @@
   height: 18px;
 }
 
+.sowing-card-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.sowing-card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.sowing-card-checkbox {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  margin-top: 0.125rem;
+  padding: 0;
+  border: 2px solid #5a7c58;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #5a7c58;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.sowing-card-checkbox:hover {
+  background: #f5f7f0;
+}
+
+.sowing-card-checkbox svg {
+  width: 16px;
+  height: 16px;
+}
+
+.sowing-card-checkbox-empty {
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+}
+
+.sowing-card--completed .sowing-card-name,
+.sowing-card--completed .sowing-card-latin {
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
 .sowing-card-name {
   font-size: 1.125rem;
   font-weight: 700;
   color: #2d4a2a;
-  margin: 0 0 0.75rem;
+  margin: 0 0 0.25rem;
   padding-right: 2rem;
+}
+
+.sowing-card-date-row,
+.sowing-card-note-row {
+  margin-top: 0.75rem;
+}
+
+.sowing-card-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #5a7c58;
+  margin-bottom: 0.25rem;
+}
+
+.sowing-card-month-select {
+  padding: 0.4rem 0.6rem;
+  font-size: 0.875rem;
+  font-family: inherit;
+  border: 1px solid #c5d4c2;
+  border-radius: 6px;
+  background: #fff;
+  color: #213547;
+  min-width: 8rem;
+}
+
+.sowing-card-note-input {
+  width: 100%;
+  padding: 0.5rem 0.6rem;
+  font-size: 0.875rem;
+  font-family: inherit;
+  border: 1px solid #c5d4c2;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+.sowing-card-note-input::placeholder {
+  color: #9ca3af;
+}
+
+.sowing-card-note-input:focus {
+  outline: none;
+  border-color: #5a7c58;
 }
 
 .sowing-card-date {
@@ -216,4 +309,165 @@
   color: #ffffff;
   background-color: #5a7c58;
   border-radius: 999px;
+}
+
+.sowing-loading,
+.sowing-empty {
+  color: #5c5c5c;
+  font-size: 0.9375rem;
+  margin: 0;
+  padding: 1rem 0;
+}
+
+.sowing-empty {
+  font-style: italic;
+}
+
+.sowing-add-form {
+  background: #ffffff;
+  border: 1px solid #c5d4c2;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.sowing-add-field {
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.sowing-add-field label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #2d4a2a;
+  margin-bottom: 0.35rem;
+}
+
+.sowing-search-input {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.9375rem;
+  font-family: inherit;
+  border: 1px solid #c5d4c2;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.sowing-search-input:focus {
+  outline: none;
+  border-color: #5a7c58;
+}
+
+.sowing-suggestions-loading {
+  font-size: 0.8125rem;
+  color: #5c5c5c;
+  margin: 0.35rem 0 0;
+}
+
+.sowing-suggestions {
+  list-style: none;
+  margin: 0.35rem 0 0;
+  padding: 0;
+  border: 1px solid #c5d4c2;
+  border-radius: 8px;
+  max-height: 220px;
+  overflow-y: auto;
+  background: #ffffff;
+}
+
+.sowing-suggestion-item {
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.sowing-suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.sowing-suggestion-item:hover {
+  background-color: #f5f7f0;
+}
+
+.sowing-suggestion-common {
+  font-weight: 600;
+  color: #2d4a2a;
+  font-size: 0.9375rem;
+}
+
+.sowing-suggestion-latin {
+  font-size: 0.8125rem;
+  color: #5c5c5c;
+  font-style: italic;
+}
+
+.sowing-add-field select {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.9375rem;
+  font-family: inherit;
+  border: 1px solid #c5d4c2;
+  border-radius: 8px;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+.sowing-add-error {
+  color: #c53030;
+  font-size: 0.875rem;
+  margin: 0 0 0.75rem;
+}
+
+.sowing-add-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.sowing-add-cancel {
+  padding: 0.6rem 1rem;
+  font-size: 0.9375rem;
+  font-family: inherit;
+  font-weight: 600;
+  color: #5c5c5c;
+  background: transparent;
+  border: 1px solid #c5d4c2;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.sowing-add-cancel:hover {
+  background: #f5f7f0;
+}
+
+.sowing-add-submit {
+  padding: 0.6rem 1rem;
+  font-size: 0.9375rem;
+  font-family: inherit;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #5a7c58;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.sowing-add-submit:hover:not(:disabled) {
+  background-color: #4a6c48;
+}
+
+.sowing-add-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.sowing-card-latin {
+  font-size: 0.875rem;
+  color: #5c5c5c;
+  font-style: italic;
+  margin: 0 0 0.5rem;
 }

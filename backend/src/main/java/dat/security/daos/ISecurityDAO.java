@@ -1,6 +1,6 @@
 package dat.security.daos;
 
-import dat.dtos.AuthUserDTO;
+import dat.security.dto.AuthUserDTO;
 import dat.security.entities.User;
 import dat.security.exceptions.ValidationException;
 

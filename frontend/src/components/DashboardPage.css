@@ -142,6 +142,12 @@
   color: #b8860b;
 }
 
+.dashboard-card-icon-chat {
+  background-color: #d4edf4;
+  border: 1px solid #2a8fa8;
+  color: #1d6b7a;
+}
+
 .dashboard-card-title {
   font-size: 1.25rem;
   font-weight: 700;
@@ -198,6 +204,15 @@
 
 .dashboard-card-btn-orange:hover {
   background-color: #b8860b;
+}
+
+.dashboard-card-btn-teal {
+  background-color: #2a8fa8;
+  color: #ffffff;
+}
+
+.dashboard-card-btn-teal:hover {
+  background-color: #1d6b7a;
 }
 
 .dashboard-help {
