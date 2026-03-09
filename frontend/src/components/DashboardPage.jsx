@@ -80,6 +80,32 @@ function DashboardPage() {
               Open Sowing List
             </Link>
           </div>
+
+          <div className="dashboard-card">
+            <div className="dashboard-card-icon dashboard-card-icon-chat">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden
+              >
+                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+              </svg>
+            </div>
+            <h3 className="dashboard-card-title">Plant Chat</h3>
+            <p className="dashboard-card-desc">
+              Ask questions about plants and gardening
+            </p>
+            <p className="dashboard-card-detail">
+              Get answers powered by plant data from Trefle and Perenual.
+            </p>
+            <Link to="/chat" className="dashboard-card-btn dashboard-card-btn-teal">
+              Open Plant Chat
+            </Link>
+          </div>
         </div>
       </main>
 

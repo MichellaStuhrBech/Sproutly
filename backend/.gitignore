@@ -33,3 +33,5 @@ build/
 
 ### Secrets (tokens, keys) ###
 src/main/resources/config.properties
+
+.env
