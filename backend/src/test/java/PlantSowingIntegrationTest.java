@@ -1,5 +1,11 @@
 import dat.config.HibernateConfig;
 import jakarta.persistence.EntityManagerFactory;
+import io.restassured.RestAssured;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.*;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance;
