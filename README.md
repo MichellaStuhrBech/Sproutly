@@ -25,8 +25,10 @@ The backend is a Java project using Maven.
 ```bash
 cd backend
 mvn clean install
-mvn exec:java -Dexec.mainClass="com.sproutly.Main"
+mvn exec:java -Dexec.mainClass="dat.Main"
 ```
+
+Or run the packaged JAR: `java -jar backend/target/sproutly-backend.jar` (server listens on port **7070**).
 
 ## Frontend Setup
 
@@ -48,5 +50,9 @@ The frontend will be available at `http://localhost:3000`
 
 ## Development
 
-- Backend runs on port `8080` (default)
-- Frontend runs on port `3000` with proxy to backend API at `/api`
+- Backend runs on port **7070**
+- Frontend runs on port **3000** with proxy to backend API at `/api`
+
+## CI/CD and deployment
+
+- **GitHub Actions:** See [DEPLOYMENT.md](DEPLOYMENT.md) for CI workflow, build artifacts, and production env vars.
