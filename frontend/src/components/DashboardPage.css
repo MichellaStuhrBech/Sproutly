@@ -230,6 +230,24 @@
   background-color: #4a3f55;
 }
 
+.dashboard-card-ad {
+  padding: 0;
+  overflow: hidden;
+}
+
+.dashboard-ad-link {
+  display: block;
+  width: 100%;
+  line-height: 0;
+}
+
+.dashboard-ad-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
 .dashboard-help {
   position: fixed;
   bottom: 1.5rem;

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import logo from '../logo/logo.png'
+import adImage from '../Advertising/tomatoSale.svg'
 import './DashboardPage.css'
 
 const API_BASE = '/api'
@@ -163,6 +164,18 @@ function DashboardPage() {
               </Link>
             </div>
           )}
+
+          <div className="dashboard-card dashboard-card-ad">
+            <a
+              href="https://www.fastershave.dk"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="dashboard-ad-link"
+              aria-label="Visit FasterShave.dk"
+            >
+              <img src={adImage} alt="FasterShave" className="dashboard-ad-image" />
+            </a>
+          </div>
         </div>
       </main>
 
