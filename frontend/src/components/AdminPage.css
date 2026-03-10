@@ -1,0 +1,162 @@
+.admin-page {
+  min-height: 100vh;
+  background-color: #f5f7f0;
+}
+
+.admin-header {
+  background-color: #ffffff;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.admin-header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.admin-header-logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  flex-shrink: 0;
+}
+
+.admin-header-brand {
+  margin: 0;
+}
+
+.admin-header-app-name {
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: #2d4a2a;
+  margin: 0 0 0.125rem;
+  letter-spacing: -0.02em;
+}
+
+.admin-header-tagline {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #5a7c58;
+  letter-spacing: 0.12em;
+  margin: 0;
+}
+
+.admin-header-sep {
+  height: 1px;
+  background-color: #c5d4c2;
+  width: 100%;
+}
+
+.admin-nav {
+  background-color: #f5f7f0;
+  padding: 1rem 1.5rem 0 1.5rem;
+}
+
+.admin-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: #3d6b3a;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.9375rem;
+  transition: color 0.2s;
+}
+
+.admin-back:hover {
+  color: #2d4a2a;
+}
+
+.admin-main {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1rem 3rem;
+}
+
+.admin-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(45, 74, 42, 0.08);
+  border: 1px solid rgba(45, 74, 42, 0.06);
+}
+
+.admin-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2d4a2a;
+  margin: 0 0 0.25rem;
+}
+
+.admin-subtitle {
+  font-size: 0.9375rem;
+  color: #5c5c5c;
+  margin: 0 0 1.5rem;
+}
+
+.admin-error {
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.9375rem;
+  color: #b91c1c;
+  background-color: #fef2f2;
+  border-radius: 10px;
+  border: 1px solid #fecaca;
+}
+
+.admin-loading {
+  font-size: 0.9375rem;
+  color: #5c5c5c;
+  margin: 0;
+}
+
+.admin-section {
+  margin-bottom: 2rem;
+}
+
+.admin-section:last-child {
+  margin-bottom: 0;
+}
+
+.admin-section-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #2d4a2a;
+  margin: 0 0 0.75rem;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #e8ebdf;
+}
+
+.admin-table th {
+  font-weight: 600;
+  color: #2d4a2a;
+  background-color: #f8f9f6;
+}
+
+.admin-table tbody tr:hover {
+  background-color: #f8f9f6;
+}
+
+.admin-empty {
+  font-size: 0.9375rem;
+  color: #8a8a8a;
+  margin: 0;
+}

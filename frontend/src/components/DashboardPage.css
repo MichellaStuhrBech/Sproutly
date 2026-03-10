@@ -215,6 +215,21 @@
   background-color: #1d6b7a;
 }
 
+.dashboard-card-icon-admin {
+  background-color: #e8e0f0;
+  border: 1px solid #6b5b7a;
+  color: #4a3f55;
+}
+
+.dashboard-card-btn-admin {
+  background-color: #5c4d6d;
+  color: #ffffff;
+}
+
+.dashboard-card-btn-admin:hover {
+  background-color: #4a3f55;
+}
+
 .dashboard-help {
   position: fixed;
   bottom: 1.5rem;

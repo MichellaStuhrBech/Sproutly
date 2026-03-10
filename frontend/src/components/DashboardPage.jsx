@@ -1,10 +1,24 @@
+import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import logo from '../logo/logo.png'
 import './DashboardPage.css'
 
+const API_BASE = '/api'
+
 function DashboardPage() {
   const location = useLocation()
   const username = location.state?.username ?? 'User'
+  const [isAdmin, setIsAdmin] = useState(false)
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (!token) return
+    fetch(`${API_BASE}/protected/admin_demo`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.ok && setIsAdmin(true))
+      .catch(() => {})
+  }, [])
 
   return (
     <div className="dashboard-page">
@@ -106,6 +120,34 @@ function DashboardPage() {
               Open Plant Chat
             </Link>
           </div>
+
+          {isAdmin && (
+            <div className="dashboard-card">
+              <div className="dashboard-card-icon dashboard-card-icon-admin">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden
+                >
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+              </div>
+              <h3 className="dashboard-card-title">Admin</h3>
+              <p className="dashboard-card-desc">
+                View top plants and latest tasks across all users
+              </p>
+              <p className="dashboard-card-detail">
+                See the 10 most popular sowing plants and the 20 most recent todo items.
+              </p>
+              <Link to="/admin" className="dashboard-card-btn dashboard-card-btn-admin">
+                Open Admin Page
+              </Link>
+            </div>
+          )}
         </div>
       </main>
 
