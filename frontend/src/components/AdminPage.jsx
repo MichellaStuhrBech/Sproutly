@@ -75,6 +75,11 @@ function AdminPage() {
             <p className="admin-loading">Loading…</p>
           ) : stats ? (
             <>
+              <div className="admin-stats-summary">
+                <p className="admin-user-count">
+                  <strong>Total users:</strong> {stats.userCount ?? 0}
+                </p>
+              </div>
               <section className="admin-section">
                 <h2 className="admin-section-title">Top 10 most picked plants (sowing list)</h2>
                 {stats.topPlants && stats.topPlants.length > 0 ? (

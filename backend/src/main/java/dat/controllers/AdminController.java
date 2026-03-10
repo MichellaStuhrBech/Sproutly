@@ -5,7 +5,7 @@ import dat.daos.impl.TaskDAO;
 import dat.dtos.AdminStatsDTO;
 import dat.dtos.AdminTaskDTO;
 import dat.dtos.TopPlantDTO;
-import dat.entities.Task;
+import dat.security.daos.SecurityDAO;
 import io.javalin.http.Context;
 import jakarta.persistence.EntityManagerFactory;
 
@@ -16,14 +16,18 @@ public class AdminController {
 
     private final PlantDAO plantDAO;
     private final TaskDAO taskDAO;
+    private final SecurityDAO securityDAO;
 
     public AdminController(EntityManagerFactory emf) {
         this.plantDAO = new PlantDAO(emf);
         this.taskDAO = TaskDAO.getInstance(emf);
+        this.securityDAO = new SecurityDAO(emf);
     }
 
     public void getStats(Context ctx) {
         // Access control is already enforced by route role (ADMIN)
+
+        long userCount = securityDAO.getAllUsers().size();
 
         // Top 10 most picked plants across all users
         List<TopPlantDTO> topPlants = plantDAO.findTopPickedPlants(10).stream()
@@ -38,7 +42,7 @@ public class AdminController {
                 .map(AdminTaskDTO::new)
                 .collect(Collectors.toList());
 
-        ctx.json(new AdminStatsDTO(topPlants, lastTasks));
+        ctx.json(new AdminStatsDTO(userCount, topPlants, lastTasks));
     }
 }
 

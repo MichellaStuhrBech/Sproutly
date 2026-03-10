@@ -101,6 +101,24 @@
   margin: 0 0 1.5rem;
 }
 
+.admin-stats-summary {
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.25rem;
+  background-color: #f0f4ef;
+  border-radius: 12px;
+  border: 1px solid rgba(45, 74, 42, 0.12);
+}
+
+.admin-user-count {
+  margin: 0;
+  font-size: 1rem;
+  color: #2d4a2a;
+}
+
+.admin-user-count strong {
+  font-weight: 600;
+}
+
 .admin-error {
   padding: 0.75rem 1rem;
   margin-bottom: 1rem;

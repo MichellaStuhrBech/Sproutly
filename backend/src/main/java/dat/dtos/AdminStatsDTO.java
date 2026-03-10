@@ -13,6 +13,7 @@ import java.util.List;
 @Setter
 public class AdminStatsDTO {
 
+    private long userCount;
     private List<TopPlantDTO> topPlants;
     private List<AdminTaskDTO> lastTasks;
 }
