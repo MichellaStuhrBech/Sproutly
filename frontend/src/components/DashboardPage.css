@@ -248,6 +248,18 @@
   object-fit: cover;
 }
 
+.dashboard-ad-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  padding: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2d4a2a;
+  text-align: center;
+}
+
 .dashboard-help {
   position: fixed;
   bottom: 1.5rem;

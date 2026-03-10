@@ -3,8 +3,8 @@ import { Link, useLocation } from 'react-router-dom'
 import logo from '../logo/logo.png'
 import './DashboardPage.css'
 
-// TomatoSale image from public/Advertising (replace TomatoSale.svg with your own TomatoSale.png if you have one)
-const TOMATO_SALE_IMAGE = '/Advertising/TomatoSale.svg'
+// Real picture: place at public/Advertising/TomatoSale.png (or .jpg and update path below)
+const TOMATO_SALE_IMAGE = '/Advertising/TomatoSale.png'
 
 const API_BASE = '/api'
 
@@ -12,6 +12,7 @@ function DashboardPage() {
   const location = useLocation()
   const username = location.state?.username ?? 'User'
   const [isAdmin, setIsAdmin] = useState(false)
+  const [adImageError, setAdImageError] = useState(false)
 
   useEffect(() => {
     const rolesJson = localStorage.getItem('roles')
@@ -175,7 +176,16 @@ function DashboardPage() {
               className="dashboard-ad-link"
               aria-label="Visit Fastershave.dk"
             >
-              <img src={TOMATO_SALE_IMAGE} alt="Tomato sale - FasterShave" className="dashboard-ad-image" />
+              {adImageError ? (
+                <span className="dashboard-ad-fallback">Fasters Have</span>
+              ) : (
+                <img
+                  src={TOMATO_SALE_IMAGE}
+                  alt="Tomato sale - FasterShave"
+                  className="dashboard-ad-image"
+                  onError={() => setAdImageError(true)}
+                />
+              )}
             </a>
           </div>
         </div>
