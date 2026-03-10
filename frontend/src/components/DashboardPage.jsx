@@ -3,8 +3,8 @@ import { Link, useLocation } from 'react-router-dom'
 import logo from '../logo/logo.png'
 import './DashboardPage.css'
 
-// TomatoSale image: place your picture at public/Advertising/TomatoSale.png (or .jpg and set path below)
-const TOMATO_SALE_IMAGE = '/Advertising/TomatoSale.png'
+// TomatoSale image from public/Advertising (replace TomatoSale.svg with your own TomatoSale.png if you have one)
+const TOMATO_SALE_IMAGE = '/Advertising/TomatoSale.svg'
 
 const API_BASE = '/api'
 
