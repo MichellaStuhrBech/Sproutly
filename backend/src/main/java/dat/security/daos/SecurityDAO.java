@@ -52,9 +52,9 @@ public class SecurityDAO implements ISecurityDAO {
                         "User with email: " + email + " already exists");
             userEntity = new User(email, password);
             em.getTransaction().begin();
-            Role userRole = em.find(Role.class, "user");
+            Role userRole = em.find(Role.class, "USER");
             if (userRole == null)
-                userRole = new Role("user");
+                userRole = new Role("USER");
             em.persist(userRole);
             userEntity.addRole(userRole);
             em.persist(userEntity);
@@ -70,14 +70,17 @@ public class SecurityDAO implements ISecurityDAO {
 
     @Override
     public User addRole(AuthUserDTO authUser, String newRole) {
+        String roleName = newRole != null ? newRole.trim().toUpperCase() : "";
+        if (roleName.isEmpty())
+            throw new ApiException(400, "Role name is required");
         try (EntityManager em = getEntityManager()) {
             User user = em.find(User.class, authUser.getEmail());
             if (user == null)
                 throw new EntityNotFoundException("No user found with email: " + authUser.getEmail());
             em.getTransaction().begin();
-            Role role = em.find(Role.class, newRole);
+            Role role = em.find(Role.class, roleName);
             if (role == null) {
-                role = new Role(newRole);
+                role = new Role(roleName);
                 em.persist(role);
             }
             user.addRole(role);
