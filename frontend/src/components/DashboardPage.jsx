@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import logo from '../logo/logo.png'
-import adImage from '../Advertising/tomatoSale.svg'
 import './DashboardPage.css'
+
+// TomatoSale image: place your picture at public/Advertising/TomatoSale.png (or .jpg and set path below)
+const TOMATO_SALE_IMAGE = '/Advertising/TomatoSale.png'
 
 const API_BASE = '/api'
 
@@ -171,9 +173,9 @@ function DashboardPage() {
               target="_blank"
               rel="noopener noreferrer"
               className="dashboard-ad-link"
-              aria-label="Visit FasterShave.dk"
+              aria-label="Visit Fastershave.dk"
             >
-              <img src={adImage} alt="FasterShave" className="dashboard-ad-image" />
+              <img src={TOMATO_SALE_IMAGE} alt="Tomato sale - FasterShave" className="dashboard-ad-image" />
             </a>
           </div>
         </div>
