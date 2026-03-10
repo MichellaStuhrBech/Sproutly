@@ -172,17 +172,18 @@ public class SecurityController implements ISecurityController {
     public AuthUserDTO verifyToken(String token) {
         boolean IS_DEPLOYED = (System.getenv("DEPLOYED") != null);
         String SECRET = IS_DEPLOYED ? System.getenv("SECRET_KEY") : Utils.getPropertyValue("SECRET_KEY", "config.properties");
-        if (SECRET == null || SECRET.isBlank()) {
-            logger.warn("SECRET_KEY is missing; token verification will fail");
-        }
 
         try {
+            if (SECRET == null || SECRET.isBlank()) {
+                logger.warn("SECRET_KEY is null or blank; cannot verify token");
+                throw new NotAuthorizedException(403, "Token is not valid");
+            }
             if (!tokenSecurity.tokenIsValid(token, SECRET)) {
-                logger.warn("Token signature invalid (wrong SECRET_KEY or tampered token)");
+                logger.warn("Token signature invalid (SECRET_KEY mismatch or tampered token - try logging in again)");
                 throw new NotAuthorizedException(403, "Token is not valid");
             }
             if (!tokenSecurity.tokenNotExpired(token)) {
-                logger.warn("Token expired");
+                logger.warn("Token expired (user must log in again)");
                 throw new NotAuthorizedException(403, "Token is not valid");
             }
             AuthUserDTO fromToken = tokenSecurity.getUserWithRolesFromToken(token);
