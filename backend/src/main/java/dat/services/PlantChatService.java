@@ -18,9 +18,22 @@ public class PlantChatService {
                     + "You have access to: (1) the user's own sowing list (plants they are planning/have added), (2) the user's todo list (garden tasks), "
                     + "(3) general plant data from Trefle and Perenual. Use the user's own lists when answering questions about their plants or tasks.\n\n";
 
-    private final TrefleService trefleService = new TrefleService();
-    private final PerenualService perenualService = new PerenualService();
-    private final OpenAIClientService openAIClientService = new OpenAIClientService();
+    private final TrefleService trefleService;
+    private final PerenualService perenualService;
+    private final OpenAIClientService openAIClientService;
+
+    public PlantChatService() {
+        this(new TrefleService(), new PerenualService(), new OpenAIClientService());
+    }
+
+    /**
+     * Constructor for testing: inject services to avoid real HTTP calls.
+     */
+    PlantChatService(TrefleService trefleService, PerenualService perenualService, OpenAIClientService openAIClientService) {
+        this.trefleService = trefleService;
+        this.perenualService = perenualService;
+        this.openAIClientService = openAIClientService;
+    }
 
     /**
      * Answers the user's question using the user's plants/tasks, Trefle and Perenual data, and OpenAI.
