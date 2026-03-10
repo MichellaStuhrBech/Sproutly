@@ -3,8 +3,8 @@ import { Link, useLocation } from 'react-router-dom'
 import logo from '../logo/logo.png'
 import './DashboardPage.css'
 
-// Real picture: place at public/Advertising/TomatoSale.png (or .jpg and update path below)
-const TOMATO_SALE_IMAGE = '/Advertising/TomatoSale.png'
+
+const TOMATO_SALE_IMAGE = '/src/Advertising/tomatoSale.png'
 
 const API_BASE = '/api'
 
