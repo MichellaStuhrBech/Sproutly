@@ -40,8 +40,17 @@ public class SecurityController implements ISecurityController {
     private static ISecurityDAO securityDAO;
     private static SecurityController instance;
     private static Logger logger = LoggerFactory.getLogger(SecurityController.class);
+    /** Cached so token creation and verification always use the same secret in this JVM. */
+    private static String cachedSecretKey;
 
     private SecurityController() { }
+
+    private static String getSecretKey() {
+        if (cachedSecretKey != null) return cachedSecretKey;
+        boolean isDeployed = (System.getenv("DEPLOYED") != null);
+        cachedSecretKey = isDeployed ? System.getenv("SECRET_KEY") : Utils.getPropertyValue("SECRET_KEY", "config.properties");
+        return cachedSecretKey;
+    }
 
     public static SecurityController getInstance() { // Singleton because we don't want multiple instances of the same class
         if (instance == null) {
@@ -150,18 +159,14 @@ public class SecurityController implements ISecurityController {
         try {
             String ISSUER;
             String TOKEN_EXPIRE_TIME;
-            String SECRET_KEY;
-
             if (System.getenv("DEPLOYED") != null) {
                 ISSUER = System.getenv("ISSUER");
                 TOKEN_EXPIRE_TIME = System.getenv("TOKEN_EXPIRE_TIME");
-                SECRET_KEY = System.getenv("SECRET_KEY");
             } else {
                 ISSUER = Utils.getPropertyValue("ISSUER", "config.properties");
                 TOKEN_EXPIRE_TIME = Utils.getPropertyValue("TOKEN_EXPIRE_TIME", "config.properties");
-                SECRET_KEY = Utils.getPropertyValue("SECRET_KEY", "config.properties");
             }
-            return tokenSecurity.createToken(user, ISSUER, TOKEN_EXPIRE_TIME, SECRET_KEY);
+            return tokenSecurity.createToken(user, ISSUER, TOKEN_EXPIRE_TIME, getSecretKey());
         } catch (Exception e) {
             e.printStackTrace();
             throw new ApiException(500, "Could not create token");
@@ -170,8 +175,7 @@ public class SecurityController implements ISecurityController {
 
     @Override
     public AuthUserDTO verifyToken(String token) {
-        boolean IS_DEPLOYED = (System.getenv("DEPLOYED") != null);
-        String SECRET = IS_DEPLOYED ? System.getenv("SECRET_KEY") : Utils.getPropertyValue("SECRET_KEY", "config.properties");
+        String SECRET = getSecretKey();
 
         try {
             if (SECRET == null || SECRET.isBlank()) {
@@ -179,11 +183,11 @@ public class SecurityController implements ISecurityController {
                 throw new NotAuthorizedException(403, "Token is not valid");
             }
             if (!tokenSecurity.tokenIsValid(token, SECRET)) {
-                logger.warn("Token signature invalid (SECRET_KEY mismatch or tampered token - try logging in again)");
+                logger.warn("Token signature invalid (wrong SECRET or tampered). User must log in again.");
                 throw new NotAuthorizedException(403, "Token is not valid");
             }
             if (!tokenSecurity.tokenNotExpired(token)) {
-                logger.warn("Token expired (user must log in again)");
+                logger.warn("Token expired. User must log in again.");
                 throw new NotAuthorizedException(403, "Token is not valid");
             }
             AuthUserDTO fromToken = tokenSecurity.getUserWithRolesFromToken(token);

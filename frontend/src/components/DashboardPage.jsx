@@ -22,7 +22,16 @@ function DashboardPage() {
     fetch(`${API_BASE}/protected/admin_demo`, {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then((res) => res.ok && setIsAdmin(true))
+      .then((res) => {
+        if (res.ok) {
+          setIsAdmin(true)
+        } else if (res.status === 401) {
+          // Token invalid or expired; clear so user logs in again and gets fresh token + roles
+          localStorage.removeItem('token')
+          localStorage.removeItem('email')
+          localStorage.removeItem('roles')
+        }
+      })
       .catch(() => {})
   }, [])
 
