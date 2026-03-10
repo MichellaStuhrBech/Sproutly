@@ -172,25 +172,38 @@ public class SecurityController implements ISecurityController {
     public AuthUserDTO verifyToken(String token) {
         boolean IS_DEPLOYED = (System.getenv("DEPLOYED") != null);
         String SECRET = IS_DEPLOYED ? System.getenv("SECRET_KEY") : Utils.getPropertyValue("SECRET_KEY", "config.properties");
+        if (SECRET == null || SECRET.isBlank()) {
+            logger.warn("SECRET_KEY is missing; token verification will fail");
+        }
 
         try {
-            if (!tokenSecurity.tokenIsValid(token, SECRET) || !tokenSecurity.tokenNotExpired(token)) {
+            if (!tokenSecurity.tokenIsValid(token, SECRET)) {
+                logger.warn("Token signature invalid (wrong SECRET_KEY or tampered token)");
+                throw new NotAuthorizedException(403, "Token is not valid");
+            }
+            if (!tokenSecurity.tokenNotExpired(token)) {
+                logger.warn("Token expired");
                 throw new NotAuthorizedException(403, "Token is not valid");
             }
             AuthUserDTO fromToken = tokenSecurity.getUserWithRolesFromToken(token);
             if (fromToken == null || fromToken.getEmail() == null) {
+                logger.warn("Token payload missing email or user");
                 throw new NotAuthorizedException(403, "Invalid token payload");
             }
             // Use current roles from database so role changes (e.g. adding ADMIN) take effect without re-login
-            return securityDAO.getByEmail(fromToken.getEmail());
+            AuthUserDTO user = securityDAO.getByEmail(fromToken.getEmail());
+            logger.info("Token verified for {} with roles: {}", user.getEmail(), user.getRoles());
+            return user;
         } catch (EntityNotFoundException e) {
+            logger.warn("User not found for token: {}", e.getMessage());
             throw new ApiException(HttpStatus.UNAUTHORIZED.getCode(), "User no longer exists");
         } catch (ParseException | JOSEException | NotAuthorizedException e) {
-            e.printStackTrace();
+            logger.warn("Token verification failed: {} - {}", e.getClass().getSimpleName(), e.getMessage());
             throw new ApiException(HttpStatus.UNAUTHORIZED.getCode(), "Unauthorized. Could not verify token");
         } catch (ApiException e) {
             throw e;
         } catch (Exception e) {
+            logger.error("Unexpected error during token verification", e);
             throw new RuntimeException(e);
         }
     }

@@ -106,7 +106,10 @@ public class SecurityDAO implements ISecurityDAO {
             if (user == null)
                 throw new EntityNotFoundException("No user found with email: " + email);
             user.getRoles().size();
-            return new AuthUserDTO(user.getEmail(), user.getRoles().stream().map(r -> r.getRoleName()).collect(Collectors.toSet()));
+            return new AuthUserDTO(user.getEmail(), user.getRoles().stream()
+                    .map(r -> r.getRoleName() != null ? r.getRoleName().trim().toUpperCase() : "")
+                    .filter(s -> !s.isEmpty())
+                    .collect(Collectors.toSet()));
         }
     }
 
