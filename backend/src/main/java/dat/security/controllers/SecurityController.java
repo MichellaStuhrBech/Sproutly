@@ -174,14 +174,22 @@ public class SecurityController implements ISecurityController {
         String SECRET = IS_DEPLOYED ? System.getenv("SECRET_KEY") : Utils.getPropertyValue("SECRET_KEY", "config.properties");
 
         try {
-            if (tokenSecurity.tokenIsValid(token, SECRET) && tokenSecurity.tokenNotExpired(token)) {
-                return tokenSecurity.getUserWithRolesFromToken(token);
-            } else {
+            if (!tokenSecurity.tokenIsValid(token, SECRET) || !tokenSecurity.tokenNotExpired(token)) {
                 throw new NotAuthorizedException(403, "Token is not valid");
             }
+            AuthUserDTO fromToken = tokenSecurity.getUserWithRolesFromToken(token);
+            if (fromToken == null || fromToken.getEmail() == null) {
+                throw new NotAuthorizedException(403, "Invalid token payload");
+            }
+            // Use current roles from database so role changes (e.g. adding ADMIN) take effect without re-login
+            return securityDAO.getByEmail(fromToken.getEmail());
+        } catch (EntityNotFoundException e) {
+            throw new ApiException(HttpStatus.UNAUTHORIZED.getCode(), "User no longer exists");
         } catch (ParseException | JOSEException | NotAuthorizedException e) {
             e.printStackTrace();
             throw new ApiException(HttpStatus.UNAUTHORIZED.getCode(), "Unauthorized. Could not verify token");
+        } catch (ApiException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
