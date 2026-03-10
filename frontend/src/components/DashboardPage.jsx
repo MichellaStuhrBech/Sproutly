@@ -11,6 +11,12 @@ function DashboardPage() {
   const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {
+    const rolesJson = localStorage.getItem('roles')
+    const roles = rolesJson ? (() => { try { return JSON.parse(rolesJson) } catch { return [] } })() : []
+    if (Array.isArray(roles) && roles.includes('ADMIN')) {
+      setIsAdmin(true)
+      return
+    }
     const token = localStorage.getItem('token')
     if (!token) return
     fetch(`${API_BASE}/protected/admin_demo`, {

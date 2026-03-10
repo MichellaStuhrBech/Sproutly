@@ -49,6 +49,7 @@ function ChatPage() {
       if (res.status === 401) {
         localStorage.removeItem('token')
         localStorage.removeItem('email')
+        localStorage.removeItem('roles')
         navigate('/login', { state: { message: 'Please log in again.' } })
         return
       }

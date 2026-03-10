@@ -1,6 +1,7 @@
 package dat.security.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nimbusds.jose.JOSEException;
 import dat.config.HibernateConfig;
@@ -58,10 +59,14 @@ public class SecurityController implements ISecurityController {
                 UserDTO credentials = ctx.bodyAsClass(UserDTO.class);
                 AuthUserDTO verifiedUser = securityDAO.getVerifiedUser(credentials.getEmail(), credentials.getPassword());
                 String token = createToken(verifiedUser);
-
+                ArrayNode rolesArray = objectMapper.createArrayNode();
+                if (verifiedUser.getRoles() != null) {
+                    verifiedUser.getRoles().forEach(rolesArray::add);
+                }
                 ctx.status(200).json(returnObject
                         .put("token", token)
-                        .put("email", verifiedUser.getEmail()));
+                        .put("email", verifiedUser.getEmail())
+                        .set("roles", rolesArray));
 
             } catch (EntityNotFoundException | ValidationException e) {
                 ctx.status(401);
@@ -81,9 +86,12 @@ public class SecurityController implements ISecurityController {
                 User created = securityDAO.createUser(userInput.getEmail(), userInput.getPassword());
 
                 String token = createToken(new AuthUserDTO(created.getEmail(), Set.of("USER")));
+                ArrayNode rolesArray = objectMapper.createArrayNode();
+                rolesArray.add("USER");
                 ctx.status(HttpStatus.CREATED).json(returnObject
                         .put("token", token)
-                        .put("email", created.getEmail()));
+                        .put("email", created.getEmail())
+                        .set("roles", rolesArray));
 
             } catch (EntityExistsException e) {
                 throw new dat.security.exceptions.ApiException(409, "User already exists");
