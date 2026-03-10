@@ -136,8 +136,10 @@ public class ApplicationConfig {
     }
 
     private static void generalExceptionHandler(Exception e, Context ctx) {
-        logger.error("An unhandled exception occurred", e.getMessage());
-        ctx.json(Utils.convertToJsonMessage(ctx, "error", e.getMessage()));
+        logger.error("An unhandled exception occurred: {}", e.getMessage(), e);
+        if (!ctx.res().isCommitted()) {
+            ctx.status(500).json(Utils.convertToJsonMessage(ctx, "error", e.getMessage()));
+        }
     }
 
     private static void corsHeaders(Context ctx) {

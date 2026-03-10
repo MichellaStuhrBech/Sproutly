@@ -48,7 +48,11 @@ public class SecurityController implements ISecurityController {
     private static String getSecretKey() {
         if (cachedSecretKey != null) return cachedSecretKey;
         boolean isDeployed = (System.getenv("DEPLOYED") != null);
-        cachedSecretKey = isDeployed ? System.getenv("SECRET_KEY") : Utils.getPropertyValue("SECRET_KEY", "config.properties");
+        String value = isDeployed ? System.getenv("SECRET_KEY") : Utils.getPropertyValue("SECRET_KEY", "config.properties");
+        if (value == null || value.isBlank()) {
+            throw new ApiException(500, "SECRET_KEY is not set. Add SECRET_KEY to config.properties or set the SECRET_KEY environment variable.");
+        }
+        cachedSecretKey = value;
         return cachedSecretKey;
     }
 
