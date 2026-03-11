@@ -13,6 +13,9 @@ function DashboardPage() {
   const username = location.state?.username ?? 'User'
   const [isAdmin, setIsAdmin] = useState(false)
   const [adImageError, setAdImageError] = useState(false)
+  const [frostWarning, setFrostWarning] = useState(false)
+  const [frostMessage, setFrostMessage] = useState('')
+  const [frostDismissed, setFrostDismissed] = useState(false)
 
   useEffect(() => {
     const rolesJson = localStorage.getItem('roles')
@@ -39,6 +42,22 @@ function DashboardPage() {
       .catch(() => {})
   }, [])
 
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (!token) return
+    fetch(`${API_BASE}/weather/frost-warning`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.ok ? res.json() : null)
+      .then((data) => {
+        if (data?.frostWarning && data?.message) {
+          setFrostWarning(true)
+          setFrostMessage(data.message)
+        }
+      })
+      .catch(() => {})
+  }, [])
+
   return (
     <div className="dashboard-page">
       <header className="dashboard-header">
@@ -60,6 +79,21 @@ function DashboardPage() {
         <p className="dashboard-subtitle">
           Choose what you'd like to work on today
         </p>
+
+        {frostWarning && !frostDismissed && (
+          <div className="dashboard-frost-banner" role="alert">
+            <span className="dashboard-frost-icon" aria-hidden>❄</span>
+            <p className="dashboard-frost-message">{frostMessage}</p>
+            <button
+              type="button"
+              className="dashboard-frost-dismiss"
+              onClick={() => setFrostDismissed(true)}
+              aria-label="Dismiss frost warning"
+            >
+              ×
+            </button>
+          </div>
+        )}
 
         <div className="dashboard-cards">
           <div className="dashboard-card">
@@ -177,7 +211,7 @@ function DashboardPage() {
               aria-label="Visit Fastershave.dk"
             >
               {adImageError ? (
-                <span className="dashboard-ad-fallback">Fasters Have</span>
+                <span className="dashboard-ad-fallback">Faster's Have</span>
               ) : (
                 <img
                   src={TOMATO_SALE_IMAGE}

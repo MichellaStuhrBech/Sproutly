@@ -14,6 +14,7 @@ public class Routes {
     private final SowingListRoutes sowingListRoutes = new SowingListRoutes(emf);
     private final ChatRoutes chatRoutes = new ChatRoutes(emf);
     private final AdminRoutes adminRoutes = new AdminRoutes(emf);
+    private final WeatherRoutes weatherRoutes = new WeatherRoutes();
 
     public EndpointGroup getRoutes() {
         return () -> {
@@ -21,6 +22,7 @@ public class Routes {
             path("/sowinglist", sowingListRoutes.getRoutes());
             path("/chat", chatRoutes.getRoutes());
             path("/admin", adminRoutes.getRoutes());
+            path("/weather", weatherRoutes.getRoutes());
         };
     }
 
