@@ -215,6 +215,51 @@
   background-color: #1d6b7a;
 }
 
+.dashboard-card-icon-admin {
+  background-color: #e8e0f0;
+  border: 1px solid #6b5b7a;
+  color: #4a3f55;
+}
+
+.dashboard-card-btn-admin {
+  background-color: #5c4d6d;
+  color: #ffffff;
+}
+
+.dashboard-card-btn-admin:hover {
+  background-color: #4a3f55;
+}
+
+.dashboard-card-ad {
+  padding: 0;
+  overflow: hidden;
+}
+
+.dashboard-ad-link {
+  display: block;
+  width: 100%;
+  line-height: 0;
+}
+
+.dashboard-ad-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+.dashboard-ad-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  padding: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2d4a2a;
+  text-align: center;
+}
+
 .dashboard-help {
   position: fixed;
   bottom: 1.5rem;

@@ -1,6 +1,7 @@
 package dat.security.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nimbusds.jose.JOSEException;
 import dat.config.HibernateConfig;
@@ -39,8 +40,21 @@ public class SecurityController implements ISecurityController {
     private static ISecurityDAO securityDAO;
     private static SecurityController instance;
     private static Logger logger = LoggerFactory.getLogger(SecurityController.class);
+    /** Cached so token creation and verification always use the same secret in this JVM. */
+    private static String cachedSecretKey;
 
     private SecurityController() { }
+
+    private static String getSecretKey() {
+        if (cachedSecretKey != null) return cachedSecretKey;
+        boolean isDeployed = (System.getenv("DEPLOYED") != null);
+        String value = isDeployed ? System.getenv("SECRET_KEY") : Utils.getPropertyValue("SECRET_KEY", "config.properties");
+        if (value == null || value.isBlank()) {
+            throw new ApiException(500, "SECRET_KEY is not set. Add SECRET_KEY to config.properties or set the SECRET_KEY environment variable.");
+        }
+        cachedSecretKey = value;
+        return cachedSecretKey;
+    }
 
     public static SecurityController getInstance() { // Singleton because we don't want multiple instances of the same class
         if (instance == null) {
@@ -58,10 +72,14 @@ public class SecurityController implements ISecurityController {
                 UserDTO credentials = ctx.bodyAsClass(UserDTO.class);
                 AuthUserDTO verifiedUser = securityDAO.getVerifiedUser(credentials.getEmail(), credentials.getPassword());
                 String token = createToken(verifiedUser);
-
+                ArrayNode rolesArray = objectMapper.createArrayNode();
+                if (verifiedUser.getRoles() != null) {
+                    verifiedUser.getRoles().forEach(rolesArray::add);
+                }
                 ctx.status(200).json(returnObject
                         .put("token", token)
-                        .put("email", verifiedUser.getEmail()));
+                        .put("email", verifiedUser.getEmail())
+                        .set("roles", rolesArray));
 
             } catch (EntityNotFoundException | ValidationException e) {
                 ctx.status(401);
@@ -81,9 +99,12 @@ public class SecurityController implements ISecurityController {
                 User created = securityDAO.createUser(userInput.getEmail(), userInput.getPassword());
 
                 String token = createToken(new AuthUserDTO(created.getEmail(), Set.of("USER")));
+                ArrayNode rolesArray = objectMapper.createArrayNode();
+                rolesArray.add("USER");
                 ctx.status(HttpStatus.CREATED).json(returnObject
                         .put("token", token)
-                        .put("email", created.getEmail()));
+                        .put("email", created.getEmail())
+                        .set("roles", rolesArray));
 
             } catch (EntityExistsException e) {
                 throw new dat.security.exceptions.ApiException(409, "User already exists");
@@ -142,18 +163,14 @@ public class SecurityController implements ISecurityController {
         try {
             String ISSUER;
             String TOKEN_EXPIRE_TIME;
-            String SECRET_KEY;
-
             if (System.getenv("DEPLOYED") != null) {
                 ISSUER = System.getenv("ISSUER");
                 TOKEN_EXPIRE_TIME = System.getenv("TOKEN_EXPIRE_TIME");
-                SECRET_KEY = System.getenv("SECRET_KEY");
             } else {
                 ISSUER = Utils.getPropertyValue("ISSUER", "config.properties");
                 TOKEN_EXPIRE_TIME = Utils.getPropertyValue("TOKEN_EXPIRE_TIME", "config.properties");
-                SECRET_KEY = Utils.getPropertyValue("SECRET_KEY", "config.properties");
             }
-            return tokenSecurity.createToken(user, ISSUER, TOKEN_EXPIRE_TIME, SECRET_KEY);
+            return tokenSecurity.createToken(user, ISSUER, TOKEN_EXPIRE_TIME, getSecretKey());
         } catch (Exception e) {
             e.printStackTrace();
             throw new ApiException(500, "Could not create token");
@@ -162,19 +179,40 @@ public class SecurityController implements ISecurityController {
 
     @Override
     public AuthUserDTO verifyToken(String token) {
-        boolean IS_DEPLOYED = (System.getenv("DEPLOYED") != null);
-        String SECRET = IS_DEPLOYED ? System.getenv("SECRET_KEY") : Utils.getPropertyValue("SECRET_KEY", "config.properties");
+        String SECRET = getSecretKey();
 
         try {
-            if (tokenSecurity.tokenIsValid(token, SECRET) && tokenSecurity.tokenNotExpired(token)) {
-                return tokenSecurity.getUserWithRolesFromToken(token);
-            } else {
+            if (SECRET == null || SECRET.isBlank()) {
+                logger.warn("SECRET_KEY is null or blank; cannot verify token");
                 throw new NotAuthorizedException(403, "Token is not valid");
             }
+            if (!tokenSecurity.tokenIsValid(token, SECRET)) {
+                logger.warn("Token signature invalid (wrong SECRET or tampered). User must log in again.");
+                throw new NotAuthorizedException(403, "Token is not valid");
+            }
+            if (!tokenSecurity.tokenNotExpired(token)) {
+                logger.warn("Token expired. User must log in again.");
+                throw new NotAuthorizedException(403, "Token is not valid");
+            }
+            AuthUserDTO fromToken = tokenSecurity.getUserWithRolesFromToken(token);
+            if (fromToken == null || fromToken.getEmail() == null) {
+                logger.warn("Token payload missing email or user");
+                throw new NotAuthorizedException(403, "Invalid token payload");
+            }
+            // Use current roles from database so role changes (e.g. adding ADMIN) take effect without re-login
+            AuthUserDTO user = securityDAO.getByEmail(fromToken.getEmail());
+            logger.info("Token verified for {} with roles: {}", user.getEmail(), user.getRoles());
+            return user;
+        } catch (EntityNotFoundException e) {
+            logger.warn("User not found for token: {}", e.getMessage());
+            throw new ApiException(HttpStatus.UNAUTHORIZED.getCode(), "User no longer exists");
         } catch (ParseException | JOSEException | NotAuthorizedException e) {
-            e.printStackTrace();
+            logger.warn("Token verification failed: {} - {}", e.getClass().getSimpleName(), e.getMessage());
             throw new ApiException(HttpStatus.UNAUTHORIZED.getCode(), "Unauthorized. Could not verify token");
+        } catch (ApiException e) {
+            throw e;
         } catch (Exception e) {
+            logger.error("Unexpected error during token verification", e);
             throw new RuntimeException(e);
         }
     }

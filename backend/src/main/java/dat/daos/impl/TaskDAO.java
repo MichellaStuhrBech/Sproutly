@@ -45,4 +45,15 @@ public class TaskDAO {
                     .getResultList();
         }
     }
+
+    /**
+     * Returns the most recently created tasks across all users, ordered by id desc.
+     */
+    public List<Task> findLastTasks(int limit) {
+        try (EntityManager em = getEntityManager()) {
+            return em.createQuery("SELECT t FROM Task t ORDER BY t.id DESC", Task.class)
+                    .setMaxResults(limit)
+                    .getResultList();
+        }
+    }
 }

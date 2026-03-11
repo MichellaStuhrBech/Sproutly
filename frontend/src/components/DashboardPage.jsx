@@ -1,10 +1,43 @@
+import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import logo from '../logo/logo.png'
 import './DashboardPage.css'
 
+// Real picture: place at public/Advertising/TomatoSale.png (or .jpg and update path below)
+const TOMATO_SALE_IMAGE = '/Advertising/TomatoSale.png'
+
+const API_BASE = '/api'
+
 function DashboardPage() {
   const location = useLocation()
   const username = location.state?.username ?? 'User'
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [adImageError, setAdImageError] = useState(false)
+
+  useEffect(() => {
+    const rolesJson = localStorage.getItem('roles')
+    const roles = rolesJson ? (() => { try { return JSON.parse(rolesJson) } catch { return [] } })() : []
+    if (Array.isArray(roles) && roles.includes('ADMIN')) {
+      setIsAdmin(true)
+      return
+    }
+    const token = localStorage.getItem('token')
+    if (!token) return
+    fetch(`${API_BASE}/protected/admin_demo`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => {
+        if (res.ok) {
+          setIsAdmin(true)
+        } else if (res.status === 401) {
+          // Token invalid or expired; clear so user logs in again and gets fresh token + roles
+          localStorage.removeItem('token')
+          localStorage.removeItem('email')
+          localStorage.removeItem('roles')
+        }
+      })
+      .catch(() => {})
+  }, [])
 
   return (
     <div className="dashboard-page">
@@ -105,6 +138,55 @@ function DashboardPage() {
             <Link to="/chat" className="dashboard-card-btn dashboard-card-btn-teal">
               Open Plant Chat
             </Link>
+          </div>
+
+          {isAdmin && (
+            <div className="dashboard-card">
+              <div className="dashboard-card-icon dashboard-card-icon-admin">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden
+                >
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+              </div>
+              <h3 className="dashboard-card-title">Admin</h3>
+              <p className="dashboard-card-desc">
+                View top plants and latest tasks across all users
+              </p>
+              <p className="dashboard-card-detail">
+                See the 10 most popular sowing plants and the 20 most recent todo items.
+              </p>
+              <Link to="/admin" className="dashboard-card-btn dashboard-card-btn-admin">
+                Open Admin Page
+              </Link>
+            </div>
+          )}
+
+          <div className="dashboard-card dashboard-card-ad">
+            <a
+              href="https://www.fastershave.dk"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="dashboard-ad-link"
+              aria-label="Visit Fastershave.dk"
+            >
+              {adImageError ? (
+                <span className="dashboard-ad-fallback">Fasters Have</span>
+              ) : (
+                <img
+                  src={TOMATO_SALE_IMAGE}
+                  alt="Tomato sale - FasterShave"
+                  className="dashboard-ad-image"
+                  onError={() => setAdImageError(true)}
+                />
+              )}
+            </a>
           </div>
         </div>
       </main>
