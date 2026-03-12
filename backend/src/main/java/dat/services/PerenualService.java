@@ -5,6 +5,9 @@ import dat.dtos.PerenualSearchResponse;
 import dat.dtos.PerenualSpeciesDTO;
 import dat.utils.Utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -17,12 +20,23 @@ import java.util.List;
  */
 public class PerenualService {
 
+    private static final Logger logger = LoggerFactory.getLogger(PerenualService.class);
     private static final String PERENUAL_SPECIES_LIST = "https://www.perenual.com/api/v2/species-list";
 
     private final String apiKey;
     private final ObjectMapper objectMapper = Utils.getObjectMapper();
 
     public PerenualService() {
+        this.apiKey = loadApiKeyFromConfig();
+        if (this.apiKey == null || this.apiKey.isBlank()) {
+            logger.warn("PERENUAL_API_KEY is not set. Set it in the environment, in config.properties, or in a .env file in the project root. Plant search and chatbot Perenual data will be empty.");
+        }
+    }
+
+    /**
+     * Load key from env, then config.properties, then .env (same order as OpenAIClientService).
+     */
+    private static String loadApiKeyFromConfig() {
         String key = System.getenv("PERENUAL_API_KEY");
         if (key == null || key.isBlank()) {
             try {
@@ -31,7 +45,10 @@ public class PerenualService {
                 key = null;
             }
         }
-        this.apiKey = key;
+        if (key == null || key.isBlank()) {
+            key = Utils.getEnvFromDotEnv("PERENUAL_API_KEY");
+        }
+        return key;
     }
 
     /**
@@ -42,6 +59,7 @@ public class PerenualService {
      */
     public List<PerenualSpeciesDTO> search(String query) {
         if (apiKey == null || apiKey.isBlank()) {
+            logger.debug("Perenual search skipped: no API key");
             return Collections.emptyList();
         }
         if (query == null || query.trim().isEmpty()) {
@@ -57,11 +75,15 @@ public class PerenualService {
                     .build();
             var response = client.send(request, java.net.http.HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
             if (response.statusCode() != 200) {
+                logger.warn("Perenual API returned status {} for query '{}'. Response: {}", response.statusCode(), query, response.body().length() > 200 ? response.body().substring(0, 200) + "..." : response.body());
                 return Collections.emptyList();
             }
             PerenualSearchResponse parsed = objectMapper.readValue(response.body(), PerenualSearchResponse.class);
-            return parsed.getData() != null ? parsed.getData() : Collections.emptyList();
+            List<PerenualSpeciesDTO> data = parsed.getData() != null ? parsed.getData() : Collections.emptyList();
+            logger.debug("Perenual search '{}' returned {} results", query, data.size());
+            return data;
         } catch (Exception e) {
+            logger.warn("Perenual search failed for '{}': {}", query, e.getMessage());
             return Collections.emptyList();
         }
     }
