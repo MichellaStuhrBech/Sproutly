@@ -147,11 +147,11 @@
 }
 
 .plant-search-results {
-  background: #ffffff;
+  background: #fef8f6;
   border-radius: 12px;
   padding: 1rem;
-  box-shadow: 0 2px 12px rgba(45, 74, 42, 0.06);
-  border: 1px solid rgba(45, 74, 42, 0.08);
+  box-shadow: 0 2px 12px rgba(201, 123, 99, 0.08);
+  border: 1px solid rgba(201, 123, 99, 0.2);
 }
 
 .plant-search-results-title {
@@ -164,6 +164,12 @@
 .plant-search-empty {
   font-size: 0.875rem;
   color: #8a8a8a;
+  margin: 0;
+}
+
+.plant-search-loading {
+  font-size: 0.875rem;
+  color: #5a7c58;
   margin: 0;
 }
 
@@ -242,11 +248,11 @@
 
 .plant-search-detail {
   min-height: 200px;
-  background: #ffffff;
+  background: #fef8f6;
   border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: 0 2px 12px rgba(45, 74, 42, 0.06);
-  border: 1px solid rgba(45, 74, 42, 0.08);
+  box-shadow: 0 2px 12px rgba(201, 123, 99, 0.08);
+  border: 1px solid rgba(201, 123, 99, 0.2);
 }
 
 .plant-search-detail-loading,

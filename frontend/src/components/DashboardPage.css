@@ -237,9 +237,9 @@
 }
 
 .dashboard-card-icon-search {
-  background-color: #ede8f5;
-  border: 1px solid #7c6ba8;
-  color: #5c4d7a;
+  background-color: #fce8e0;
+  border: 1px solid #c97b63;
+  color: #a85a3a;
 }
 
 .dashboard-card-title {
@@ -309,13 +309,13 @@
   background-color: #1d6b7a;
 }
 
-.dashboard-card-btn-purple {
-  background-color: #6b5b7a;
+.dashboard-card-btn-search {
+  background-color: #c97b63;
   color: #ffffff;
 }
 
-.dashboard-card-btn-purple:hover {
-  background-color: #5c4d6d;
+.dashboard-card-btn-search:hover {
+  background-color: #a85a3a;
 }
 
 .dashboard-card-icon-admin {

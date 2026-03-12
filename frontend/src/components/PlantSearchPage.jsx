@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import logo from '../logo/logo.png'
 import './PlantSearchPage.css'
@@ -15,6 +15,7 @@ function PlantSearchPage() {
   const [details, setDetails] = useState(null)
   const [detailsLoading, setDetailsLoading] = useState(false)
   const [error, setError] = useState('')
+  const skipSearchRef = useRef(false)
 
   useEffect(() => {
     if (!token) {
@@ -23,41 +24,65 @@ function PlantSearchPage() {
     }
   }, [token, navigate])
 
-  const handleSearch = async (e) => {
-    e?.preventDefault()
+  // Debounced search as you type (like Trefle on Sowing list)
+  useEffect(() => {
     const q = (query || '').trim()
-    if (!q || !token) return
-    setError('')
-    setSearching(true)
-    setDetails(null)
-    setSelectedId(null)
-    try {
-      const res = await fetch(
-        `${API_BASE}/plants/search?q=${encodeURIComponent(q)}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      )
-      if (res.status === 401) {
-        localStorage.removeItem('token')
-        localStorage.removeItem('email')
-        localStorage.removeItem('roles')
-        navigate('/login', { state: { message: 'Please log in again.' } })
-        return
-      }
-      if (!res.ok) {
-        setResults([])
-        setError('Search failed.')
-        return
-      }
-      const data = await res.json()
-      const list = Array.isArray(data) ? data : []
-      setResults(list)
-      setError(list.length === 0 ? 'No plants found. Try another search.' : '')
-    } catch {
+    if (q.length < 2) {
       setResults([])
-      setError('Could not reach the server.')
-    } finally {
-      setSearching(false)
+      setError('')
+      return
     }
+    if (skipSearchRef.current) {
+      skipSearchRef.current = false
+      return
+    }
+    const t = setTimeout(async () => {
+      setSearching(true)
+      setError('')
+      try {
+        const res = await fetch(
+          `${API_BASE}/plants/search?q=${encodeURIComponent(q)}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        )
+        if (res.status === 401) {
+          localStorage.removeItem('token')
+          localStorage.removeItem('email')
+          localStorage.removeItem('roles')
+          navigate('/login', { state: { message: 'Please log in again.' } })
+          return
+        }
+        if (!res.ok) {
+          setResults([])
+          setError('Search failed.')
+          return
+        }
+        const data = await res.json()
+        const list = Array.isArray(data) ? data : []
+        setResults(list)
+        setError(list.length === 0 ? 'No plants found. Try another search.' : '')
+      } catch {
+        setResults([])
+        setError('Could not reach the server.')
+      } finally {
+        setSearching(false)
+      }
+    }, 300)
+    return () => clearTimeout(t)
+  }, [query, token, navigate])
+
+  const handleSelectPlant = (plant) => {
+    const name = plant.commonName ?? plant.common_name ?? 'Unknown'
+    skipSearchRef.current = true
+    setQuery(name)
+    setSelectedId(plant.id)
+  }
+
+  const handleSearch = (e) => {
+    e?.preventDefault()
+    if ((query || '').trim().length < 2) return
+    skipSearchRef.current = false
+    // Trigger effect by touching query; effect will run and search
+    setQuery((q) => q.trim())
   }
 
   useEffect(() => {
@@ -126,9 +151,12 @@ function PlantSearchPage() {
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="e.g. tomato, monstera, lavender"
+            placeholder="Start typing to see suggestions (e.g. tomato, lavender)"
             className="plant-search-input"
             aria-label="Search for a plant"
+            aria-autocomplete="list"
+            aria-controls="plant-search-suggestions"
+            aria-expanded={results.length > 0}
           />
           <button type="submit" className="plant-search-btn" disabled={searching}>
             {searching ? 'Searching…' : 'Search'}
@@ -142,12 +170,15 @@ function PlantSearchPage() {
         )}
 
         <div className="plant-search-layout">
-          <aside className="plant-search-results">
-            <h2 className="plant-search-results-title">Results</h2>
+          <aside className="plant-search-results" id="plant-search-suggestions">
+            <h2 className="plant-search-results-title">Suggestions</h2>
             {results.length === 0 && !searching && (
               <p className="plant-search-empty">
-                Enter a search term and click Search to find plants.
+                Start typing to see suggestions (e.g. tomato, lavender).
               </p>
+            )}
+            {searching && results.length === 0 && (
+              <p className="plant-search-loading">Searching…</p>
             )}
             <ul className="plant-search-list">
               {results.map((plant) => {
@@ -158,7 +189,7 @@ function PlantSearchPage() {
                     <button
                       type="button"
                       className={`plant-search-result-item ${active ? 'plant-search-result-item-active' : ''}`}
-                      onClick={() => setSelectedId(id)}
+                      onClick={() => handleSelectPlant(plant)}
                     >
                       {imageUrl(plant) ? (
                         <img

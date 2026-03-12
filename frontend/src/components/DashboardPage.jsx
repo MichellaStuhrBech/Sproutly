@@ -228,7 +228,7 @@ function DashboardPage() {
             <p className="dashboard-card-detail">
               Search by name and see care info, watering, sunlight, hardiness, and more.
             </p>
-            <Link to="/plant-search" className="dashboard-card-btn dashboard-card-btn-purple">
+            <Link to="/plant-search" className="dashboard-card-btn dashboard-card-btn-search">
               Search plants
             </Link>
           </div>
