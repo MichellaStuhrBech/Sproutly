@@ -12,6 +12,7 @@ function PlantSearchPage() {
   const [results, setResults] = useState([])
   const [searching, setSearching] = useState(false)
   const [selectedId, setSelectedId] = useState(null)
+  const [selectedPlant, setSelectedPlant] = useState(null)
   const [details, setDetails] = useState(null)
   const [detailsLoading, setDetailsLoading] = useState(false)
   const [error, setError] = useState('')
@@ -74,6 +75,7 @@ function PlantSearchPage() {
     const name = plant.commonName ?? plant.common_name ?? 'Unknown'
     skipSearchRef.current = true
     setQuery(name)
+    setSelectedPlant(plant)
     setSelectedId(plant.id)
   }
 
@@ -88,6 +90,7 @@ function PlantSearchPage() {
   useEffect(() => {
     if (!selectedId || !token) {
       setDetails(null)
+      setSelectedPlant(null)
       return
     }
     setDetailsLoading(true)
@@ -335,7 +338,28 @@ function PlantSearchPage() {
                 )}
               </div>
             )}
-            {!detailsLoading && !details && selectedId && (
+            {!detailsLoading && !details && selectedId && selectedPlant && (
+              <div className="plant-search-detail-fallback">
+                <p className="plant-search-detail-empty">
+                  Full care details are not available from Perenual for this species (API limit or ID). Here is what we have from search:
+                </p>
+                <div className="plant-search-detail-head">
+                  {imageUrl(selectedPlant) ? (
+                    <img src={imageUrl(selectedPlant)} alt="" className="plant-search-detail-image" />
+                  ) : (
+                    <div className="plant-search-detail-image-placeholder">🌿</div>
+                  )}
+                  <div className="plant-search-detail-head-text">
+                    <h2 className="plant-search-detail-name">{displayName(selectedPlant)}</h2>
+                    {displayScientific(selectedPlant) && (
+                      <p className="plant-search-detail-scientific">{displayScientific(selectedPlant)}</p>
+                    )}
+                    <p className="plant-search-detail-meta">Perenual ID: {selectedPlant.id}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+            {!detailsLoading && !details && selectedId && !selectedPlant && (
               <p className="plant-search-detail-empty">Could not load details for this plant.</p>
             )}
             {!detailsLoading && !details && !selectedId && (
