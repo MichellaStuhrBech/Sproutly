@@ -10,6 +10,8 @@ public class AuthUserDTO {
 
     private String email;
     private Set<String> roles;
+    /** Shown in UI; may be null for legacy accounts. */
+    private String displayName;
 
     public AuthUserDTO() {
     }
@@ -17,6 +19,12 @@ public class AuthUserDTO {
     public AuthUserDTO(String email, Set<String> roles) {
         this.email = email;
         this.roles = roles;
+    }
+
+    public AuthUserDTO(String email, Set<String> roles, String displayName) {
+        this.email = email;
+        this.roles = roles;
+        this.displayName = displayName;
     }
 
     public String getEmail() {
@@ -33,5 +41,13 @@ public class AuthUserDTO {
 
     public void setRoles(Set<String> roles) {
         this.roles = roles;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 }

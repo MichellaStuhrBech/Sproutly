@@ -96,7 +96,7 @@ public class ApplicationConfig {
         } catch (EntityNotFoundException e) {
             try {
                 SecurityDAO securityDAO = new SecurityDAO(dat.config.HibernateConfig.getEntityManagerFactory());
-                securityDAO.createUser(adminEmail, adminPassword);
+                securityDAO.createUser(adminEmail, adminPassword, "Admin");
                 AuthUserDTO dto = securityDAO.getByEmail(adminEmail);
                 securityDAO.addRole(dto, "ADMIN");
                 logger.info("Created admin user: {} (change password in production)", adminEmail);

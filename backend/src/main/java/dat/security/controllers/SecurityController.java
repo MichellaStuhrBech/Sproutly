@@ -79,6 +79,7 @@ public class SecurityController implements ISecurityController {
                 ctx.status(200).json(returnObject
                         .put("token", token)
                         .put("email", verifiedUser.getEmail())
+                        .put("displayName", verifiedUser.getDisplayName() != null ? verifiedUser.getDisplayName() : "")
                         .set("roles", rolesArray));
 
             } catch (EntityNotFoundException | ValidationException e) {
@@ -96,7 +97,7 @@ public class SecurityController implements ISecurityController {
             try {
                 dat.security.dto.UserDTO userInput = ctx.bodyAsClass(dat.security.dto.UserDTO.class);
 
-                User created = securityDAO.createUser(userInput.getEmail(), userInput.getPassword());
+                User created = securityDAO.createUser(userInput.getEmail(), userInput.getPassword(), userInput.getName());
 
                 String token = createToken(new AuthUserDTO(created.getEmail(), Set.of("USER")));
                 ArrayNode rolesArray = objectMapper.createArrayNode();
@@ -104,6 +105,7 @@ public class SecurityController implements ISecurityController {
                 ctx.status(HttpStatus.CREATED).json(returnObject
                         .put("token", token)
                         .put("email", created.getEmail())
+                        .put("displayName", created.getDisplayName() != null ? created.getDisplayName() : "")
                         .set("roles", rolesArray));
 
             } catch (EntityExistsException e) {
@@ -215,6 +217,24 @@ public class SecurityController implements ISecurityController {
             logger.error("Unexpected error during token verification", e);
             throw new RuntimeException(e);
         }
+    }
+
+    /** PATCH /api/auth/profile — body { "displayName": "Mickey Mouse" } */
+    public @NotNull Handler updateProfile() {
+        return (ctx) -> {
+            try {
+                AuthUserDTO user = ctx.attribute("user");
+                ObjectNode body = ctx.bodyAsClass(ObjectNode.class);
+                String name = body != null && body.has("displayName") ? body.get("displayName").asText("") : "";
+                if (name.isBlank()) {
+                    throw new ApiException(400, "displayName is required");
+                }
+                securityDAO.updateDisplayName(user.getEmail(), name.trim());
+                ctx.json(objectMapper.createObjectNode().put("displayName", name.trim()));
+            } catch (EntityNotFoundException e) {
+                ctx.status(404).json(objectMapper.createObjectNode().put("msg", "User not found"));
+            }
+        };
     }
 
     public @NotNull Handler addRole() {

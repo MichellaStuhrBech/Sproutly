@@ -38,19 +38,19 @@ public class SecurityDAO implements ISecurityDAO {
             user.getRoles().size(); // force roles to be fetched from db
             if (!user.verifyPassword(password))
                 throw new ValidationException("Wrong password");
-            return new AuthUserDTO(user.getEmail(), user.getRoles().stream().map(r -> r.getRoleName()).collect(Collectors.toSet()));
+            return new AuthUserDTO(user.getEmail(), user.getRoles().stream().map(r -> r.getRoleName()).collect(Collectors.toSet()), user.getDisplayName());
         }
     }
 
     @Override
-    public User createUser(String email, String password) {
+    public User createUser(String email, String password, String displayName) {
         try (EntityManager em = getEntityManager()) {
             User userEntity = em.find(User.class, email);
             if (userEntity != null)
                 throw new dat.security.exceptions.ApiException(
                         409,
                         "User with email: " + email + " already exists");
-            userEntity = new User(email, password);
+            userEntity = new User(email, password, displayName);
             em.getTransaction().begin();
             Role userRole = em.find(Role.class, "USER");
             if (userRole == null)
@@ -94,7 +94,7 @@ public class SecurityDAO implements ISecurityDAO {
         try (EntityManager em = getEntityManager()) {
             List<User> users = em.createQuery("SELECT u FROM User u", User.class).getResultList();
             return users.stream()
-                    .map(u -> new AuthUserDTO(u.getEmail(), u.getRoles().stream().map(r -> r.getRoleName()).collect(Collectors.toSet())))
+                    .map(u -> new AuthUserDTO(u.getEmail(), u.getRoles().stream().map(r -> r.getRoleName()).collect(Collectors.toSet()), u.getDisplayName()))
                     .collect(Collectors.toList());
         }
     }
@@ -109,7 +109,7 @@ public class SecurityDAO implements ISecurityDAO {
             return new AuthUserDTO(user.getEmail(), user.getRoles().stream()
                     .map(r -> r.getRoleName() != null ? r.getRoleName().trim().toUpperCase() : "")
                     .filter(s -> !s.isEmpty())
-                    .collect(Collectors.toSet()));
+                    .collect(Collectors.toSet()), user.getDisplayName());
         }
     }
 
@@ -131,6 +131,18 @@ public class SecurityDAO implements ISecurityDAO {
                 throw new EntityNotFoundException("No user found with email: " + email);
             em.getTransaction().begin();
             user.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
+            em.getTransaction().commit();
+        }
+    }
+
+    @Override
+    public void updateDisplayName(String email, String displayName) {
+        try (EntityManager em = getEntityManager()) {
+            User user = em.find(User.class, email);
+            if (user == null)
+                throw new EntityNotFoundException("No user found with email: " + email);
+            em.getTransaction().begin();
+            user.setDisplayName(displayName != null && !displayName.isBlank() ? displayName.trim() : null);
             em.getTransaction().commit();
         }
     }

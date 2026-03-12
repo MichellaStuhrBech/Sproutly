@@ -10,7 +10,20 @@ const API_BASE = '/api'
 
 function DashboardPage() {
   const location = useLocation()
-  const username = location.state?.username ?? 'User'
+  const storedName = (() => {
+    try {
+      return localStorage.getItem('displayName') || ''
+    } catch {
+      return ''
+    }
+  })()
+  const username =
+    (storedName && storedName.trim()) ||
+    location.state?.username ||
+    (() => {
+      const em = localStorage.getItem('email') || ''
+      return em.includes('@') ? em.split('@')[0] : em || 'User'
+    })()
   const [isAdmin, setIsAdmin] = useState(false)
   const [adImageError, setAdImageError] = useState(false)
   const [frostWarning, setFrostWarning] = useState(false)
@@ -39,6 +52,7 @@ function DashboardPage() {
           localStorage.removeItem('token')
           localStorage.removeItem('email')
           localStorage.removeItem('roles')
+          localStorage.removeItem('displayName')
         }
       })
       .catch(() => {})

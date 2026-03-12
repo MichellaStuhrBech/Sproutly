@@ -33,9 +33,18 @@ function LoginPage() {
           localStorage.setItem('token', data.token)
           localStorage.setItem('email', data.email || email)
           localStorage.setItem('roles', JSON.stringify(data.roles || []))
+          const displayName = (data.displayName || '').trim()
+          if (displayName) {
+            localStorage.setItem('displayName', displayName)
+          } else {
+            localStorage.removeItem('displayName')
+          }
         }
-        const username = email.includes('@') ? email.split('@')[0] : email || 'User'
-        navigate('/dashboard', { state: { username } })
+        const welcome =
+          (data.displayName || '').trim() ||
+          (email.includes('@') ? email.split('@')[0] : email) ||
+          'User'
+        navigate('/dashboard', { state: { username: welcome } })
         return
       }
 
