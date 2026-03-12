@@ -1,5 +1,6 @@
 package dat.controllers;
 
+import dat.config.HibernateConfig;
 import dat.dtos.FrostWarningDTO;
 import dat.services.DmiForecastService;
 import io.javalin.http.Context;
@@ -20,6 +21,12 @@ public class WeatherController {
      * Returns whether the user should be notified about frost (temp below 0°C) in the next 12–24 hours.
      */
     public void getFrostWarning(Context ctx) {
+        // During tests we avoid calling the real DMI API to keep tests fast and deterministic.
+        if (Boolean.TRUE.equals(HibernateConfig.getTest())) {
+            ctx.json(new FrostWarningDTO(false, null));
+            return;
+        }
+
         double lat = parseDouble(ctx.queryParam("lat"), DEFAULT_LAT);
         double lon = parseDouble(ctx.queryParam("lon"), DEFAULT_LON);
 
