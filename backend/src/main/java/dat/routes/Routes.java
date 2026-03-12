@@ -15,6 +15,7 @@ public class Routes {
     private final ChatRoutes chatRoutes = new ChatRoutes(emf);
     private final AdminRoutes adminRoutes = new AdminRoutes(emf);
     private final WeatherRoutes weatherRoutes = new WeatherRoutes();
+    private final NotificationRoutes notificationRoutes = new NotificationRoutes(emf);
 
     public EndpointGroup getRoutes() {
         return () -> {
@@ -23,6 +24,7 @@ public class Routes {
             path("/chat", chatRoutes.getRoutes());
             path("/admin", adminRoutes.getRoutes());
             path("/weather", weatherRoutes.getRoutes());
+            path("/notifications", notificationRoutes.getRoutes());
         };
     }
 

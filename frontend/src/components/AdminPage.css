@@ -178,3 +178,117 @@
   color: #8a8a8a;
   margin: 0;
 }
+
+/* Broadcast notifications */
+.admin-section-notifications {
+  padding-top: 0.5rem;
+  border-top: 1px solid #e8ebdf;
+}
+
+.admin-notification-desc {
+  font-size: 0.9375rem;
+  color: #5c5c5c;
+  margin: 0 0 1rem;
+}
+
+.admin-notification-form {
+  margin-bottom: 1.5rem;
+}
+
+.admin-notification-field {
+  margin-bottom: 1rem;
+}
+
+.admin-notification-field label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #2d4a2a;
+  margin-bottom: 0.35rem;
+}
+
+.admin-notification-field textarea,
+.admin-notification-field input[type="date"] {
+  width: 100%;
+  max-width: 400px;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.9375rem;
+  border: 1px solid #c5d4c2;
+  border-radius: 8px;
+  font-family: inherit;
+}
+
+.admin-notification-field textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.admin-notification-submit {
+  padding: 0.5rem 1.25rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #fff;
+  background-color: #3d6b3a;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.admin-notification-submit:hover:not(:disabled) {
+  background-color: #2d4a2a;
+}
+
+.admin-notification-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.admin-notification-list-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2d4a2a;
+  margin: 0 0 0.5rem;
+}
+
+.admin-notification-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.admin-notification-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #e8ebdf;
+  font-size: 0.9375rem;
+}
+
+.admin-notification-item-message {
+  flex: 1;
+  min-width: 200px;
+  color: #2d4a2a;
+}
+
+.admin-notification-item-date {
+  color: #5a7c58;
+  font-weight: 600;
+}
+
+.admin-notification-delete {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8125rem;
+  color: #b91c1c;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.admin-notification-delete:hover {
+  background: #fee2e2;
+}

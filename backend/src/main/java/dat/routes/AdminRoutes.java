@@ -5,7 +5,7 @@ import dat.security.enums.Role;
 import io.javalin.apibuilder.EndpointGroup;
 import jakarta.persistence.EntityManagerFactory;
 
-import static io.javalin.apibuilder.ApiBuilder.get;
+import static io.javalin.apibuilder.ApiBuilder.*;
 
 public class AdminRoutes {
 
@@ -17,8 +17,10 @@ public class AdminRoutes {
 
     protected EndpointGroup getRoutes() {
         return () -> {
-            // GET /api/admin/stats
             get("/stats", adminController::getStats, Role.ADMIN);
+            post("/notifications", adminController::createNotification, Role.ADMIN);
+            get("/notifications", adminController::getNotifications, Role.ADMIN);
+            delete("/notifications/{id}", adminController::deleteNotification, Role.ADMIN);
         };
     }
 }

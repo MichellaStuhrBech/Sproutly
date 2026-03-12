@@ -16,6 +16,8 @@ function DashboardPage() {
   const [frostWarning, setFrostWarning] = useState(false)
   const [frostMessage, setFrostMessage] = useState('')
   const [frostDismissed, setFrostDismissed] = useState(false)
+  const [adminNotifications, setAdminNotifications] = useState([])
+  const [dismissedNotificationIds, setDismissedNotificationIds] = useState(() => [])
 
   useEffect(() => {
     const rolesJson = localStorage.getItem('roles')
@@ -58,6 +60,19 @@ function DashboardPage() {
       .catch(() => {})
   }, [])
 
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (!token) return
+    fetch(`${API_BASE}/notifications/active`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.ok ? res.json() : null)
+      .then((data) => {
+        setAdminNotifications(Array.isArray(data) ? data : [])
+      })
+      .catch(() => setAdminNotifications([]))
+  }, [])
+
   return (
     <div className="dashboard-page">
       <header className="dashboard-header">
@@ -94,6 +109,23 @@ function DashboardPage() {
             </button>
           </div>
         )}
+
+        {adminNotifications
+          .filter((n) => n.id != null && !dismissedNotificationIds.includes(n.id))
+          .map((n) => (
+            <div key={n.id} className="dashboard-notification-banner" role="alert">
+              <span className="dashboard-notification-icon" aria-hidden>📢</span>
+              <p className="dashboard-notification-message">{n.message}</p>
+              <button
+                type="button"
+                className="dashboard-notification-dismiss"
+                onClick={() => setDismissedNotificationIds((prev) => [...prev, n.id])}
+                aria-label="Dismiss notification"
+              >
+                ×
+              </button>
+            </div>
+          ))}
 
         <div className="dashboard-cards">
           <div className="dashboard-card">
