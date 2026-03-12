@@ -236,6 +236,12 @@
   color: #1d6b7a;
 }
 
+.dashboard-card-icon-search {
+  background-color: #ede8f5;
+  border: 1px solid #7c6ba8;
+  color: #5c4d7a;
+}
+
 .dashboard-card-title {
   font-size: 1.25rem;
   font-weight: 700;
@@ -301,6 +307,15 @@
 
 .dashboard-card-btn-teal:hover {
   background-color: #1d6b7a;
+}
+
+.dashboard-card-btn-purple {
+  background-color: #6b5b7a;
+  color: #ffffff;
+}
+
+.dashboard-card-btn-purple:hover {
+  background-color: #5c4d6d;
 }
 
 .dashboard-card-icon-admin {

@@ -7,23 +7,25 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PerenualSpeciesDTO {
+public class PerenualImageDTO {
 
-    private Integer id;
+    @JsonProperty("thumbnail")
+    private String thumbnail;
 
-    @JsonProperty("common_name")
-    private String commonName;
+    @JsonProperty("small_url")
+    private String smallUrl;
 
-    @JsonProperty("scientific_name")
-    private List<String> scientificName;
+    @JsonProperty("regular_url")
+    private String regularUrl;
 
-    @JsonProperty("default_image")
-    private PerenualImageDTO defaultImage;
+    @JsonProperty("medium_url")
+    private String mediumUrl;
+
+    @JsonProperty("original_url")
+    private String originalUrl;
 }

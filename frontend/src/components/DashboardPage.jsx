@@ -206,6 +206,33 @@ function DashboardPage() {
             </Link>
           </div>
 
+          <div className="dashboard-card">
+            <div className="dashboard-card-icon dashboard-card-icon-search">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden
+              >
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.35-4.35" />
+              </svg>
+            </div>
+            <h3 className="dashboard-card-title">Plant search</h3>
+            <p className="dashboard-card-desc">
+              Look up any plant with Perenual
+            </p>
+            <p className="dashboard-card-detail">
+              Search by name and see care info, watering, sunlight, hardiness, and more.
+            </p>
+            <Link to="/plant-search" className="dashboard-card-btn dashboard-card-btn-purple">
+              Search plants
+            </Link>
+          </div>
+
           {isAdmin && (
             <div className="dashboard-card">
               <div className="dashboard-card-icon dashboard-card-icon-admin">

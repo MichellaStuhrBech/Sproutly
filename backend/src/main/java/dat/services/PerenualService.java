@@ -65,4 +65,33 @@ public class PerenualService {
             return Collections.emptyList();
         }
     }
+
+    private static final String PERENUAL_SPECIES_DETAILS = "https://www.perenual.com/api/v2/species/details/";
+
+    /**
+     * Fetch full details for a species by id.
+     *
+     * @param speciesId Perenual species id.
+     * @return Details DTO or null if key missing, id invalid, or on error.
+     */
+    public dat.dtos.PerenualSpeciesDetailsDTO getDetails(int speciesId) {
+        if (apiKey == null || apiKey.isBlank()) {
+            return null;
+        }
+        try {
+            String url = PERENUAL_SPECIES_DETAILS + speciesId + "?key=" + apiKey;
+            var client = java.net.http.HttpClient.newHttpClient();
+            var request = java.net.http.HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .GET()
+                    .build();
+            var response = client.send(request, java.net.http.HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+            if (response.statusCode() != 200) {
+                return null;
+            }
+            return objectMapper.readValue(response.body(), dat.dtos.PerenualSpeciesDetailsDTO.class);
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }
