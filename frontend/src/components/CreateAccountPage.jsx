@@ -40,7 +40,11 @@ function CreateAccountPage() {
         body: JSON.stringify({ email, password, name: name.trim() }),
       })
 
-      const data = await res.json().catch(() => ({}))
+      let data = {}
+      const contentType = res.headers.get('content-type')
+      if (contentType && contentType.includes('application/json')) {
+        data = await res.json().catch(() => ({}))
+      }
 
       if (res.ok && res.status === 201) {
         navigate('/login', { state: { message: 'Account created. Please log in.' } })
@@ -54,11 +58,17 @@ function CreateAccountPage() {
       }
 
       if (res.status === 500) {
-        setError(message || 'Server error. Please try again or log in if you already have an account.')
+        setError(
+          message ||
+          'Server error. On a live site, the administrator may need to set SECRET_KEY. Please try again or log in if you already have an account.'
+        )
         return
       }
 
-      setError(message || 'Something went wrong. Please try again.')
+      setError(
+        message ||
+        'Something went wrong. Please check your connection and try again.'
+      )
     } catch (err) {
       setError('Could not reach the server. Is the backend running on port 7070?')
     } finally {
@@ -117,12 +127,14 @@ function CreateAccountPage() {
             <label htmlFor="password" className="create-account-label">
               Password
             </label>
-            <p className="create-account-hint">At least 6 characters.</p>
+            <p className="create-account-hint" aria-live="polite">
+              Password must be at least 6 characters.
+            </p>
             <input
               id="password"
               type="password"
               className="create-account-input"
-              placeholder="........"
+              placeholder="Min. 6 characters"
               autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -133,11 +145,14 @@ function CreateAccountPage() {
             <label htmlFor="confirmPassword" className="create-account-label">
               Confirm Password
             </label>
+            <p className="create-account-hint" aria-live="polite">
+              Same as above (min. 6 characters).
+            </p>
             <input
               id="confirmPassword"
               type="password"
               className="create-account-input"
-              placeholder="........"
+              placeholder="Repeat password"
               autoComplete="new-password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}

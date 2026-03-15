@@ -69,9 +69,10 @@
 }
 
 .create-account-hint {
-  font-size: 0.8125rem;
-  color: #5c5c5c;
-  margin: 0 0 0.25rem;
+  font-size: 0.875rem;
+  color: #2d4a2a;
+  margin: 0 0 0.35rem;
+  font-weight: 500;
 }
 
 .create-account-input {
