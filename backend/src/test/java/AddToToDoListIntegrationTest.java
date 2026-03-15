@@ -40,10 +40,7 @@ public class AddToToDoListIntegrationTest {
         }
     }
 
-    @AfterAll
-    void tearDownAll() {
-        if (emf != null) emf.close();
-    }
+    // Do not close emf: shared static from HibernateConfig.getEntityManagerFactoryForTest().
 
     @Test
     void addTask_withValidToken_returns201AndTaskIsCreated() {

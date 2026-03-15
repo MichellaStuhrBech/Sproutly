@@ -34,10 +34,8 @@ class WeatherRoutesIntegrationTest {
         }
     }
 
-    @AfterAll
-    void tearDownAll() {
-        if (emf != null) emf.close();
-    }
+    // Do not close emf: it is the shared static from HibernateConfig.getEntityManagerFactoryForTest().
+    // Closing it would break other test classes that run after this one.
 
     @Test
     void frostWarning_withoutToken_returns401() {
