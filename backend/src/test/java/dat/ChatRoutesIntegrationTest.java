@@ -26,6 +26,9 @@ class ChatRoutesIntegrationTest {
         EntityManager em = emf.createEntityManager();
         try {
             em.getTransaction().begin();
+            em.createQuery("DELETE FROM Task").executeUpdate();
+            em.createQuery("DELETE FROM Plant").executeUpdate();
+            em.createQuery("DELETE FROM SowingPlan").executeUpdate();
             em.createNativeQuery("DELETE FROM user_roles").executeUpdate();
             em.createQuery("DELETE FROM User").executeUpdate();
             em.getTransaction().commit();

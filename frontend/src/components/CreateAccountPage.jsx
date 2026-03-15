@@ -47,12 +47,18 @@ function CreateAccountPage() {
         return
       }
 
+      const message = data.msg ?? data.message
       if (res.status === 409) {
-        setError(data.msg || 'An account with this email already exists.')
+        setError(message || 'An account with this email already exists.')
         return
       }
 
-      setError(data.msg || 'Something went wrong. Please try again.')
+      if (res.status === 500) {
+        setError(message || 'Server error. Please try again or log in if you already have an account.')
+        return
+      }
+
+      setError(message || 'Something went wrong. Please try again.')
     } catch (err) {
       setError('Could not reach the server. Is the backend running on port 7070?')
     } finally {
@@ -111,6 +117,7 @@ function CreateAccountPage() {
             <label htmlFor="password" className="create-account-label">
               Password
             </label>
+            <p className="create-account-hint">At least 6 characters.</p>
             <input
               id="password"
               type="password"

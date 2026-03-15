@@ -110,6 +110,12 @@ public class SecurityController implements ISecurityController {
 
             } catch (EntityExistsException e) {
                 throw new dat.security.exceptions.ApiException(409, "User already exists");
+            } catch (ApiException e) {
+                throw e;
+            } catch (Exception e) {
+                logger.error("Registration failed", e);
+                String msg = e.getMessage();
+                throw new ApiException(500, msg != null && !msg.isBlank() ? msg : "Could not create account. Please try again.");
             }
         };
     }
@@ -167,14 +173,18 @@ public class SecurityController implements ISecurityController {
             String TOKEN_EXPIRE_TIME;
             if (System.getenv("DEPLOYED") != null) {
                 ISSUER = System.getenv("ISSUER");
+                if (ISSUER == null || ISSUER.isBlank()) ISSUER = "Sproutly";
                 TOKEN_EXPIRE_TIME = System.getenv("TOKEN_EXPIRE_TIME");
+                if (TOKEN_EXPIRE_TIME == null || TOKEN_EXPIRE_TIME.isBlank()) TOKEN_EXPIRE_TIME = "86400000";
             } else {
                 ISSUER = Utils.getPropertyValue("ISSUER", "config.properties");
                 TOKEN_EXPIRE_TIME = Utils.getPropertyValue("TOKEN_EXPIRE_TIME", "config.properties");
             }
             return tokenSecurity.createToken(user, ISSUER, TOKEN_EXPIRE_TIME, getSecretKey());
+        } catch (ApiException e) {
+            throw e;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Token creation failed", e);
             throw new ApiException(500, "Could not create token");
         }
     }
