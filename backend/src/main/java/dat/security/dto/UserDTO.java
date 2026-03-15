@@ -13,4 +13,6 @@ public class UserDTO {
 
     private String email;
     private String password;
+    /** Optional display name (e.g. "Mickey Mouse") — stored on register. */
+    private String name;
 }

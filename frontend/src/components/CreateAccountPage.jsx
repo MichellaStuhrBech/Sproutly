@@ -6,6 +6,7 @@ const API_BASE = '/api'
 
 function CreateAccountPage() {
   const navigate = useNavigate()
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -26,12 +27,17 @@ function CreateAccountPage() {
       return
     }
 
+    if (!name.trim()) {
+      setError('Please enter your name')
+      return
+    }
+
     setLoading(true)
     try {
       const res = await fetch(`${API_BASE}/users/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, name: name.trim() }),
       })
 
       const data = await res.json().catch(() => ({}))
@@ -83,6 +89,9 @@ function CreateAccountPage() {
               className="create-account-input"
               placeholder="Your name"
               autoComplete="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
             />
 
             <label htmlFor="email" className="create-account-label">

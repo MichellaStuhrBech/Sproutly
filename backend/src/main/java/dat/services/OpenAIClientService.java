@@ -29,6 +29,10 @@ public class OpenAIClientService {
     private final ObjectMapper objectMapper = Utils.getObjectMapper();
 
     public OpenAIClientService() {
+        this(loadApiKeyFromConfig());
+    }
+
+    private static String loadApiKeyFromConfig() {
         String key = System.getenv("OPENAI_API_KEY");
         if (key == null || key.isBlank()) {
             try {
@@ -40,7 +44,14 @@ public class OpenAIClientService {
         if (key == null || key.isBlank()) {
             key = Utils.getEnvFromDotEnv("OPENAI_API_KEY");
         }
-        this.apiKey = key;
+        return key;
+    }
+
+    /**
+     * Constructor for testing: pass API key (or null/blank) to control behaviour without env/config.
+     */
+    public OpenAIClientService(String apiKey) {
+        this.apiKey = apiKey;
         if (this.apiKey == null || this.apiKey.isBlank()) {
             logger.warn("OPENAI_API_KEY is not set. Set it in the environment, in config.properties, or in a .env file in the project root. Plant chat will not return AI replies.");
         }

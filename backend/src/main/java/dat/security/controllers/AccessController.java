@@ -5,6 +5,8 @@ import dat.security.enums.Role;
 import io.javalin.http.Context;
 import io.javalin.http.UnauthorizedResponse;
 import io.javalin.security.RouteRole;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 
@@ -14,6 +16,7 @@ import java.util.Set;
 
 public class AccessController implements IAccessController {
 
+    private static final Logger logger = LoggerFactory.getLogger(AccessController.class);
     SecurityController securityController = SecurityController.getInstance();
 
     /**
@@ -40,6 +43,7 @@ public class AccessController implements IAccessController {
         AuthUserDTO user = ctx.attribute("user");
         Set<RouteRole> allowedRoles = ctx.routeRoles(); // roles allowed for the current route
         if (!securityController.authorize(user, allowedRoles)) {
+            logger.warn("Authorization failed: user roles={}, required={}", user != null ? user.getRoles() : "null", allowedRoles);
             throw new UnauthorizedResponse("Unauthorized with roles: " + user.getRoles() + ". Needed roles are: " + allowedRoles);
         }
     }

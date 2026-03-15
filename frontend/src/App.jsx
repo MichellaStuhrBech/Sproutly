@@ -6,7 +6,9 @@ import DashboardPage from './components/DashboardPage'
 import TodoPage from './components/TodoPage'
 import SowingPage from './components/SowingPage'
 import ChatPage from './components/ChatPage'
+import AdminPage from './components/AdminPage'
 import HelpPage from './components/HelpPage'
+import PlantSearchPage from './components/PlantSearchPage'
 import './App.css'
 
 function App() {
@@ -19,6 +21,8 @@ function App() {
       <Route path="/todo" element={<TodoPage />} />
       <Route path="/sowing" element={<SowingPage />} />
       <Route path="/chat" element={<ChatPage />} />
+      <Route path="/plant-search" element={<PlantSearchPage />} />
+      <Route path="/admin" element={<AdminPage />} />
       <Route path="/help" element={<HelpPage />} />
     </Routes>
   )

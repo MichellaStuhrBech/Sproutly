@@ -6,11 +6,14 @@ import dat.exceptions.ApiException;
 import dat.routes.Routes;
 import dat.security.controllers.AccessController;
 import dat.security.controllers.SecurityController;
+import dat.security.daos.SecurityDAO;
+import dat.security.dto.AuthUserDTO;
 import dat.security.enums.Role;
 import dat.security.exceptions.NotAuthorizedException;
 import dat.security.routes.SecurityRoutes;
 import dat.utils.Utils;
 import io.javalin.Javalin;
+import jakarta.persistence.EntityNotFoundException;
 import io.javalin.config.JavalinConfig;
 import io.javalin.http.Context;
 import org.slf4j.Logger;
@@ -62,9 +65,47 @@ public class ApplicationConfig {
     }
 
     public static Javalin startServer(int port) {
+        ensureAdminUserExists();
         Javalin app = createApp();
         app.start(port);
         return app;
+    }
+
+    /**
+     * Ensures an admin user exists in the database. Uses ADMIN_EMAIL and ADMIN_PASSWORD from
+     * config.properties if set; otherwise creates admin@test.dk with password admin123.
+     */
+    private static void ensureAdminUserExists() {
+        String adminEmail = "admin@test.dk";
+        String adminPassword = "admin123";
+        try {
+            String e = Utils.getPropertyValue("ADMIN_EMAIL", "config.properties");
+            String p = Utils.getPropertyValue("ADMIN_PASSWORD", "config.properties");
+            if (e != null && !e.isBlank()) adminEmail = e.trim();
+            if (p != null && !p.isBlank()) adminPassword = p;
+        } catch (Exception ignored) {
+            // use defaults
+        }
+        try {
+            SecurityDAO securityDAO = new SecurityDAO(dat.config.HibernateConfig.getEntityManagerFactory());
+            AuthUserDTO dto = securityDAO.getByEmail(adminEmail);
+            if (dto.getRoles() == null || !dto.getRoles().contains("ADMIN")) {
+                securityDAO.addRole(dto, "ADMIN");
+                logger.info("Added ADMIN role to user: {}", adminEmail);
+            }
+        } catch (EntityNotFoundException e) {
+            try {
+                SecurityDAO securityDAO = new SecurityDAO(dat.config.HibernateConfig.getEntityManagerFactory());
+                securityDAO.createUser(adminEmail, adminPassword, "Admin");
+                AuthUserDTO dto = securityDAO.getByEmail(adminEmail);
+                securityDAO.addRole(dto, "ADMIN");
+                logger.info("Created admin user: {} (change password in production)", adminEmail);
+            } catch (Exception ex) {
+                logger.warn("Could not create admin user: {}", ex.getMessage());
+            }
+        } catch (Exception e) {
+            logger.warn("Could not ensure admin user: {}", e.getMessage());
+        }
     }
 
     public static void afterRequest(Context ctx) {
@@ -95,8 +136,10 @@ public class ApplicationConfig {
     }
 
     private static void generalExceptionHandler(Exception e, Context ctx) {
-        logger.error("An unhandled exception occurred", e.getMessage());
-        ctx.json(Utils.convertToJsonMessage(ctx, "error", e.getMessage()));
+        logger.error("An unhandled exception occurred: {}", e.getMessage(), e);
+        if (!ctx.res().isCommitted()) {
+            ctx.status(500).json(Utils.convertToJsonMessage(ctx, "error", e.getMessage()));
+        }
     }
 
     private static void corsHeaders(Context ctx) {

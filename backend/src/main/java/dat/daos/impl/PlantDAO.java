@@ -53,6 +53,23 @@ public class PlantDAO {
         }
     }
 
+    /**
+     * Returns aggregated counts of plants grouped by name across all users.
+     * Each element is an Object[] of [String name, Long count], ordered by count desc.
+     */
+    public List<Object[]> findTopPickedPlants(int limit) {
+        try (EntityManager em = emf.createEntityManager()) {
+            return em.createQuery(
+                            "select p.name, count(p.id) as picks " +
+                                    "from Plant p " +
+                                    "group by p.name " +
+                                    "order by picks desc",
+                            Object[].class)
+                    .setMaxResults(limit)
+                    .getResultList();
+        }
+    }
+
     public Optional<Plant> findByUserEmailAndId(String userEmail, Long plantId) {
         try (EntityManager em = emf.createEntityManager()) {
             Plant p = em.createQuery(

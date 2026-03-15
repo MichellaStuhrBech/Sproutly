@@ -13,12 +13,20 @@ public class Routes {
     private final TodoListRoutes todoListRoutes = new TodoListRoutes();
     private final SowingListRoutes sowingListRoutes = new SowingListRoutes(emf);
     private final ChatRoutes chatRoutes = new ChatRoutes(emf);
+    private final AdminRoutes adminRoutes = new AdminRoutes(emf);
+    private final WeatherRoutes weatherRoutes = new WeatherRoutes();
+    private final NotificationRoutes notificationRoutes = new NotificationRoutes(emf);
+    private final PerenualRoutes perenualRoutes = new PerenualRoutes();
 
     public EndpointGroup getRoutes() {
         return () -> {
             path("/tasks", todoListRoutes.getRoutes());
             path("/sowinglist", sowingListRoutes.getRoutes());
             path("/chat", chatRoutes.getRoutes());
+            path("/admin", adminRoutes.getRoutes());
+            path("/weather", weatherRoutes.getRoutes());
+            path("/notifications", notificationRoutes.getRoutes());
+            path("/plants", perenualRoutes.getRoutes());
         };
     }
 

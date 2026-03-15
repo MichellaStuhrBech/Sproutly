@@ -28,7 +28,7 @@ mvn clean install
 mvn exec:java -Dexec.mainClass="dat.Main"
 ```
 
-Or run the packaged JAR: `java -jar backend/target/sproutly-backend.jar` (server listens on port **7070**).
+Or run the packaged JAR: `java -jar backend/target/sproutly-backend.jar` (server listens on port **7070**). To build the JAR: `cd backend && mvn clean package -DskipTests`, or use `backend/build-jar.ps1` / `backend/build-jar.sh`.
 
 ## Frontend Setup
 

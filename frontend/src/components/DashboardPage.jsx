@@ -1,10 +1,91 @@
+import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import logo from '../logo/logo.png'
 import './DashboardPage.css'
 
+
+const TOMATO_SALE_IMAGE = '/src/Advertising/tomatoSale.png'
+
+const API_BASE = '/api'
+
 function DashboardPage() {
   const location = useLocation()
-  const username = location.state?.username ?? 'User'
+  const storedName = (() => {
+    try {
+      return localStorage.getItem('displayName') || ''
+    } catch {
+      return ''
+    }
+  })()
+  const username =
+    (storedName && storedName.trim()) ||
+    location.state?.username ||
+    (() => {
+      const em = localStorage.getItem('email') || ''
+      return em.includes('@') ? em.split('@')[0] : em || 'User'
+    })()
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [adImageError, setAdImageError] = useState(false)
+  const [frostWarning, setFrostWarning] = useState(false)
+  const [frostMessage, setFrostMessage] = useState('')
+  const [frostDismissed, setFrostDismissed] = useState(false)
+  const [adminNotifications, setAdminNotifications] = useState([])
+  const [dismissedNotificationIds, setDismissedNotificationIds] = useState(() => [])
+
+  useEffect(() => {
+    const rolesJson = localStorage.getItem('roles')
+    const roles = rolesJson ? (() => { try { return JSON.parse(rolesJson) } catch { return [] } })() : []
+    if (Array.isArray(roles) && roles.includes('ADMIN')) {
+      setIsAdmin(true)
+      return
+    }
+    const token = localStorage.getItem('token')
+    if (!token) return
+    fetch(`${API_BASE}/protected/admin_demo`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => {
+        if (res.ok) {
+          setIsAdmin(true)
+        } else if (res.status === 401) {
+          // Token invalid or expired; clear so user logs in again and gets fresh token + roles
+          localStorage.removeItem('token')
+          localStorage.removeItem('email')
+          localStorage.removeItem('roles')
+          localStorage.removeItem('displayName')
+        }
+      })
+      .catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (!token) return
+    fetch(`${API_BASE}/weather/frost-warning`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.ok ? res.json() : null)
+      .then((data) => {
+        if (data?.frostWarning && data?.message) {
+          setFrostWarning(true)
+          setFrostMessage(data.message)
+        }
+      })
+      .catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (!token) return
+    fetch(`${API_BASE}/notifications/active`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.ok ? res.json() : null)
+      .then((data) => {
+        setAdminNotifications(Array.isArray(data) ? data : [])
+      })
+      .catch(() => setAdminNotifications([]))
+  }, [])
 
   return (
     <div className="dashboard-page">
@@ -27,6 +108,38 @@ function DashboardPage() {
         <p className="dashboard-subtitle">
           Choose what you'd like to work on today
         </p>
+
+        {frostWarning && !frostDismissed && (
+          <div className="dashboard-frost-banner" role="alert">
+            <span className="dashboard-frost-icon" aria-hidden>❄</span>
+            <p className="dashboard-frost-message">{frostMessage}</p>
+            <button
+              type="button"
+              className="dashboard-frost-dismiss"
+              onClick={() => setFrostDismissed(true)}
+              aria-label="Dismiss frost warning"
+            >
+              ×
+            </button>
+          </div>
+        )}
+
+        {adminNotifications
+          .filter((n) => n.id != null && !dismissedNotificationIds.includes(n.id))
+          .map((n) => (
+            <div key={n.id} className="dashboard-notification-banner" role="alert">
+              <span className="dashboard-notification-icon" aria-hidden>📢</span>
+              <p className="dashboard-notification-message">{n.message}</p>
+              <button
+                type="button"
+                className="dashboard-notification-dismiss"
+                onClick={() => setDismissedNotificationIds((prev) => [...prev, n.id])}
+                aria-label="Dismiss notification"
+              >
+                ×
+              </button>
+            </div>
+          ))}
 
         <div className="dashboard-cards">
           <div className="dashboard-card">
@@ -105,6 +218,82 @@ function DashboardPage() {
             <Link to="/chat" className="dashboard-card-btn dashboard-card-btn-teal">
               Open Plant Chat
             </Link>
+          </div>
+
+          <div className="dashboard-card">
+            <div className="dashboard-card-icon dashboard-card-icon-search">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden
+              >
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.35-4.35" />
+              </svg>
+            </div>
+            <h3 className="dashboard-card-title">Plant search</h3>
+            <p className="dashboard-card-desc">
+              Look up any plant with Perenual
+            </p>
+            <p className="dashboard-card-detail">
+              Search by name and see care info, watering, sunlight, hardiness, and more.
+            </p>
+            <Link to="/plant-search" className="dashboard-card-btn dashboard-card-btn-search">
+              Search plants
+            </Link>
+          </div>
+
+          {isAdmin && (
+            <div className="dashboard-card">
+              <div className="dashboard-card-icon dashboard-card-icon-admin">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden
+                >
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+              </div>
+              <h3 className="dashboard-card-title">Admin</h3>
+              <p className="dashboard-card-desc">
+                View top plants and latest tasks across all users
+              </p>
+              <p className="dashboard-card-detail">
+                See the 10 most popular sowing plants and the 20 most recent todo items.
+              </p>
+              <Link to="/admin" className="dashboard-card-btn dashboard-card-btn-admin">
+                Open Admin Page
+              </Link>
+            </div>
+          )}
+
+          <div className="dashboard-card dashboard-card-ad">
+            <a
+              href="https://www.fastershave.dk"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="dashboard-ad-link"
+              aria-label="Visit Fastershave.dk"
+            >
+              {adImageError ? (
+                <span className="dashboard-ad-fallback">Faster's Have</span>
+              ) : (
+                <img
+                  src={TOMATO_SALE_IMAGE}
+                  alt="Tomato sale - FasterShave"
+                  className="dashboard-ad-image"
+                  onError={() => setAdImageError(true)}
+                />
+              )}
+            </a>
           </div>
         </div>
       </main>

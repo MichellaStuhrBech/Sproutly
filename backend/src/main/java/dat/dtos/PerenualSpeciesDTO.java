@@ -23,4 +23,7 @@ public class PerenualSpeciesDTO {
 
     @JsonProperty("scientific_name")
     private List<String> scientificName;
+
+    @JsonProperty("default_image")
+    private PerenualImageDTO defaultImage;
 }

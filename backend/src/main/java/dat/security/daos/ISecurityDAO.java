@@ -8,11 +8,12 @@ import java.util.List;
 
 public interface ISecurityDAO {
     AuthUserDTO getVerifiedUser(String email, String password) throws ValidationException;
-    User createUser(String email, String password);
+    User createUser(String email, String password, String displayName);
     User addRole(AuthUserDTO user, String newRole);
     List<AuthUserDTO> getAllUsers();
     AuthUserDTO getByEmail(String email);
     User getUserByEmail(String email);
     void updateUser(String email, String newPassword);
+    void updateDisplayName(String email, String displayName);
     void deleteUser(String email);
 }

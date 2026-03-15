@@ -34,6 +34,10 @@ public class User implements Serializable, ISecurityUser {
     @Column(name = "password")
     private String password;
 
+    /** Display name shown in the app (e.g. "Mickey Mouse"). Optional for legacy users. */
+    @Column(name = "display_name", length = 255)
+    private String displayName;
+
     @JoinTable(name = "user_roles", joinColumns = {@JoinColumn(name = "user_name", referencedColumnName = "username")}, inverseJoinColumns = {@JoinColumn(name = "role_name", referencedColumnName = "name")})
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private Set<Role> roles = new HashSet<>();
@@ -56,6 +60,12 @@ public class User implements Serializable, ISecurityUser {
     public User(String email, String userPass) {
         this.email = email;
         this.password = BCrypt.hashpw(userPass, BCrypt.gensalt());
+    }
+
+    public User(String email, String userPass, String displayName) {
+        this.email = email;
+        this.password = BCrypt.hashpw(userPass, BCrypt.gensalt());
+        this.displayName = displayName != null && !displayName.isBlank() ? displayName.trim() : null;
     }
 
     public User(String email, Set<Role> roleEntityList) {
