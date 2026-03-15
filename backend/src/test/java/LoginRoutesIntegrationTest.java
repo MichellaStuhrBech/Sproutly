@@ -38,11 +38,7 @@ public class LoginRoutesIntegrationTest {
         }
     }
 
-    @AfterAll
-    void tearDownAll() {
-        if (emf != null) emf.close();
-    }
-
+    // Do not close emf: shared static from HibernateConfig.getEntityManagerFactoryForTest().
 
     @Test
     void login_withRegisteredCredentials_returnsOk() {
