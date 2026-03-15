@@ -117,6 +117,7 @@ function CreateAccountPage() {
             <label htmlFor="password" className="create-account-label">
               Password
             </label>
+            <p className="create-account-hint">At least 6 characters.</p>
             <input
               id="password"
               type="password"
