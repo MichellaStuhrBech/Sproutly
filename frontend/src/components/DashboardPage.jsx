@@ -195,6 +195,35 @@ function DashboardPage() {
           </div>
 
           <div className="dashboard-card">
+            <div className="dashboard-card-icon dashboard-card-icon-beds">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden
+              >
+                <rect x="3" y="3" width="7" height="7" rx="1" />
+                <rect x="14" y="3" width="7" height="7" rx="1" />
+                <rect x="3" y="14" width="7" height="7" rx="1" />
+                <rect x="14" y="14" width="7" height="7" rx="1" />
+              </svg>
+            </div>
+            <h3 className="dashboard-card-title">Garden Beds</h3>
+            <p className="dashboard-card-desc">
+              Plan what goes in each bed
+            </p>
+            <p className="dashboard-card-detail">
+              Add garden beds (squares) and write what you’re growing in each, e.g. peas, tomatoes and cauliflower.
+            </p>
+            <Link to="/garden-beds" className="dashboard-card-btn dashboard-card-btn-beds">
+              Open Garden Beds
+            </Link>
+          </div>
+
+          <div className="dashboard-card">
             <div className="dashboard-card-icon dashboard-card-icon-chat">
               <svg
                 viewBox="0 0 24 24"

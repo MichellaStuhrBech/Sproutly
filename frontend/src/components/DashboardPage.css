@@ -230,6 +230,12 @@
   color: #b8860b;
 }
 
+.dashboard-card-icon-beds {
+  background-color: #e8ddd0;
+  border: 1px solid #8b6914;
+  color: #6b5344;
+}
+
 .dashboard-card-icon-chat {
   background-color: #d4edf4;
   border: 1px solid #2a8fa8;
@@ -298,6 +304,15 @@
 
 .dashboard-card-btn-orange:hover {
   background-color: #b8860b;
+}
+
+.dashboard-card-btn-beds {
+  background-color: #8b6914;
+  color: #ffffff;
+}
+
+.dashboard-card-btn-beds:hover {
+  background-color: #6b5344;
 }
 
 .dashboard-card-btn-teal {
