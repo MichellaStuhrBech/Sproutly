@@ -34,6 +34,7 @@ public class AddToToDoListIntegrationTest {
             em.createQuery("DELETE FROM Task").executeUpdate();
             em.createQuery("DELETE FROM Plant").executeUpdate();
             em.createQuery("DELETE FROM SowingPlan").executeUpdate();
+            em.createQuery("DELETE FROM GardenBed").executeUpdate();
             em.createNativeQuery("DELETE FROM user_roles").executeUpdate();
             em.createQuery("DELETE FROM User").executeUpdate();
             em.getTransaction().commit();

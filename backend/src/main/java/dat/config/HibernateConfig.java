@@ -1,6 +1,7 @@
 package dat.config;
 
 import dat.entities.AdminNotification;
+import dat.entities.GardenBed;
 import dat.entities.Plant;
 import dat.entities.SowingPlan;
 import dat.entities.Task;
@@ -51,6 +52,7 @@ public class HibernateConfig {
         configuration.addAnnotatedClass(SowingPlan.class);
         configuration.addAnnotatedClass(Plant.class);
         configuration.addAnnotatedClass(AdminNotification.class);
+        configuration.addAnnotatedClass(GardenBed.class);
 
     }
 

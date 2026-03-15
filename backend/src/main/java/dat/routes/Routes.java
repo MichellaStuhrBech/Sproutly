@@ -17,10 +17,12 @@ public class Routes {
     private final WeatherRoutes weatherRoutes = new WeatherRoutes();
     private final NotificationRoutes notificationRoutes = new NotificationRoutes(emf);
     private final PerenualRoutes perenualRoutes = new PerenualRoutes();
+    private final GardenBedRoutes gardenBedRoutes = new GardenBedRoutes();
 
     public EndpointGroup getRoutes() {
         return () -> {
             path("/tasks", todoListRoutes.getRoutes());
+            path("/garden-beds", gardenBedRoutes.getRoutes());
             path("/sowinglist", sowingListRoutes.getRoutes());
             path("/chat", chatRoutes.getRoutes());
             path("/admin", adminRoutes.getRoutes());

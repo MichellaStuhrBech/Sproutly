@@ -9,6 +9,7 @@ import ChatPage from './components/ChatPage'
 import AdminPage from './components/AdminPage'
 import HelpPage from './components/HelpPage'
 import PlantSearchPage from './components/PlantSearchPage'
+import GardenBedsPage from './components/GardenBedsPage'
 import './App.css'
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
       <Route path="/sowing" element={<SowingPage />} />
       <Route path="/chat" element={<ChatPage />} />
       <Route path="/plant-search" element={<PlantSearchPage />} />
+      <Route path="/garden-beds" element={<GardenBedsPage />} />
       <Route path="/admin" element={<AdminPage />} />
       <Route path="/help" element={<HelpPage />} />
     </Routes>
