@@ -2,6 +2,77 @@
 
 This project is set up for CI/CD with GitHub Actions.
 
+---
+
+## DigitalOcean droplet (Nginx + Docker) — current production
+
+The app is deployed on a **DigitalOcean droplet** with this architecture. Keep it in mind for any code or infrastructure changes.
+
+### Architecture
+
+| Component | Where it runs | Notes |
+|-----------|----------------|--------|
+| **Nginx** | Host (Linux) | Reverse proxy + static files. Ports 80, 443. HTTPS via Certbot. |
+| **Frontend** | Nginx | Static files from `/var/www/sproutly`. **Not** in Docker. |
+| **Backend** | Docker (`app` container) | Java JAR, port **7070**. |
+| **PostgreSQL** | Docker (`db` container) | Persistence. |
+
+- **Domain:** michellastuhrbech.dk  
+- **Frontend:** Built to `frontend/dist/`, copied to `/var/www/sproutly`.  
+- **API:** Nginx proxies `https://michellastuhrbech.dk/api` → `http://127.0.0.1:7070/api/`.  
+- **docker-compose:** `/root/backend/docker-compose.yml` (on the server). Services: `app`, `db`.
+
+### Constraints
+
+- Ports 80 and 443 are used by Nginx; do not bind the app to them.  
+- The frontend is **not** served by Docker; Nginx serves it from `/var/www/sproutly`.  
+- The frontend uses relative `/api`; no `VITE_API_URL` is needed because Nginx proxies on the same origin.
+
+### Backend env (Docker)
+
+In production, set these on the server (e.g. in `/root/backend/.env`, not committed):
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `SECRET_KEY` | **Yes** | JWT signing secret (min 32 chars). Without it, login and create-account fail. |
+| `ISSUER` | No | JWT issuer (default: Sproutly). |
+| `TOKEN_EXPIRE_TIME` | No | Expiry in ms (default: 86400000). |
+| `OPENAI_API_KEY` | No | Plant chat. |
+| `PERENUAL_API_KEY` | No | Plant search. |
+
+Example `/root/backend/.env` on the server:
+
+```bash
+SECRET_KEY=your-long-random-secret-at-least-32-characters
+# ISSUER=Sproutly
+# TOKEN_EXPIRE_TIME=86400000
+```
+
+Then run: `docker compose --env-file .env up -d --build`.
+
+### CI/CD (GitHub Actions + SSH)
+
+On push to `main`, the workflow (or a server-side script) typically:
+
+1. SSH to the droplet  
+2. `cd /root/backend`  
+3. `git pull origin main`  
+4. `docker compose down`  
+5. `docker compose up -d --build --force-recreate`  
+6. Build frontend (e.g. `cd frontend && npm ci && npm run build`)  
+7. Copy `frontend/dist/*` to `/var/www/sproutly`  
+8. `nginx -s reload` (or `systemctl reload nginx`)
+
+The repo’s `deploy.yml` builds the JAR and frontend and uploads artifacts; the actual deploy to the droplet can be a separate job (e.g. SSH + run the steps above) or a script on the server triggered by webhook/pull.
+
+### Nginx (reference)
+
+- Static root: `root /var/www/sproutly;`  
+- Proxy: `location /api { proxy_pass http://127.0.0.1:7070/api/; ... }`  
+- SPA fallback: `try_files $uri $uri/ /index.html;` for client-side routing.
+
+---
+
 ## Workflows
 
 ### CI (`ci.yml`)

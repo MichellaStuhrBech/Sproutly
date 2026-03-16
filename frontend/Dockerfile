@@ -1,3 +1,5 @@
+# Optional: use this to build the frontend in Docker. Production deploy uses Nginx
+# and copies frontend/dist to /var/www/sproutly (see DEPLOYMENT.md).
 FROM node:20-alpine AS build
 
 WORKDIR /app
@@ -6,6 +8,9 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
+# Only needed if API is on another origin. With Nginx proxying /api, leave unset.
+ARG VITE_API_URL
+ENV VITE_API_URL=${VITE_API_URL}
 RUN npm run build
 
 FROM nginx:alpine
