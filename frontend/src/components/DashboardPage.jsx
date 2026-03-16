@@ -4,7 +4,7 @@ import { API_BASE } from '../api'
 import logo from '../logo/logo.png'
 import './DashboardPage.css'
 
-const TOMATO_SALE_IMAGE = '/src/Advertising/tomatoSale.png'
+const TOMATO_SALE_IMAGE = '/Advertising/tomatoSale.png'
 
 function DashboardPage() {
   const location = useLocation()
