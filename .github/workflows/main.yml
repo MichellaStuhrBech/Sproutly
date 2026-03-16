@@ -27,8 +27,8 @@ jobs:
             docker compose up -d --build --force-recreate
 
             cd /root/backend/frontend
-            npm install
-            npm run build
+            docker run --rm -v /root/backend/frontend:/app -w /app node:20 npm install
+            docker run --rm -v /root/backend/frontend:/app -w /app node:20 npm run build
 
             rm -rf /var/www/sproutly/*
             cp -r dist/* /var/www/sproutly/
