@@ -65,11 +65,17 @@ On push to `main`, the workflow (or a server-side script) typically:
 
 The repo’s `deploy.yml` builds the JAR and frontend and uploads artifacts; the actual deploy to the droplet can be a separate job (e.g. SSH + run the steps above) or a script on the server triggered by webhook/pull.
 
-### Nginx (reference)
+### Nginx (required for login to work on card navigation)
 
-- Static root: `root /var/www/sproutly;`  
-- Proxy: `location /api { proxy_pass http://127.0.0.1:7070/api/; ... }`  
-- SPA fallback: `try_files $uri $uri/ /index.html;` for client-side routing.
+Nginx **must forward the `Authorization` header** to the backend. If it doesn’t, the backend gets no JWT and returns 401, so the frontend clears the token and redirects to login when you open any card (To Do, Sowing, Garden Beds, etc.).
+
+- Static root: `root /var/www/sproutly;`
+- SPA fallback: `try_files $uri $uri/ /index.html;`
+- **API proxy** must include:
+  - `proxy_pass http://127.0.0.1:7070/api/;`
+  - `proxy_set_header Authorization $http_authorization;` (and preferably `proxy_pass_request_headers on;`)
+
+Example: see **`docs/nginx-sproutly.example.conf`**. After changing Nginx, run `sudo nginx -t` then `sudo systemctl reload nginx`.
 
 ---
 
