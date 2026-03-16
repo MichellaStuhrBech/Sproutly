@@ -1,4 +1,4 @@
-name: Deploy to DigitalOcean
+name: Deploy
 
 on:
   push:
@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy to droplet
+      - name: Deploy to server
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.DROPLET_HOST }}
@@ -19,8 +19,18 @@ jobs:
           port: ${{ secrets.DROPLET_PORT }}
           script: |
             set -e
+
             cd /root/backend
             git pull origin main
+
             docker compose down
             docker compose up -d --build --force-recreate
-            docker image prune -f
+
+            cd /root/backend/frontend
+            npm install
+            npm run build
+
+            rm -rf /var/www/sproutly/*
+            cp -r dist/* /var/www/sproutly/
+
+            systemctl reload nginx
