@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { API_BASE } from '../api'
 import logo from '../logo/logo.png'
 import './DashboardPage.css'
 
-
 const TOMATO_SALE_IMAGE = '/src/Advertising/tomatoSale.png'
-
-const API_BASE = '/api'
 
 function DashboardPage() {
   const location = useLocation()

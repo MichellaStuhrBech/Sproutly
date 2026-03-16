@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { API_BASE } from '../api'
 import './CreateAccountPage.css'
-
-const API_BASE = '/api'
 
 function CreateAccountPage() {
   const navigate = useNavigate()
@@ -65,12 +64,22 @@ function CreateAccountPage() {
         return
       }
 
+      if (res.status === 404) {
+        setError(
+          message ||
+          'Registration service not found. If this is the live site, the API URL may be wrong or the backend is not running.'
+        )
+        return
+      }
+
       setError(
         message ||
-        'Something went wrong. Please check your connection and try again.'
+        'Something went wrong. If this is the live site, check that the backend is running and reachable (and that SECRET_KEY is set). Try again later.'
       )
     } catch (err) {
-      setError('Could not reach the server. Is the backend running on port 7070?')
+      setError(
+        'Could not reach the server. Check your connection. If this is the live site, the backend may be down or the API URL may be wrong.'
+      )
     } finally {
       setLoading(false)
     }

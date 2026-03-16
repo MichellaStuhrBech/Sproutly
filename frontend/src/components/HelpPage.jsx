@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import './PlaceholderPage.css'
 
-const API_BASE = '/api'
+import { API_BASE } from '../api'
 
 function HelpPage() {
   const [displayName, setDisplayName] = useState(() => localStorage.getItem('displayName') || '')

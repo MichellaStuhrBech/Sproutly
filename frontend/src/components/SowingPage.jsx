@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import logo from '../logo/logo.png'
 import './SowingPage.css'
 
-const API_BASE = '/api'
+import { API_BASE } from '../api'
 const MONTHS = ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
 function SowingPage() {

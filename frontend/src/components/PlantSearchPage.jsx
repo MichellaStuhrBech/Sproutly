@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import logo from '../logo/logo.png'
 import './PlantSearchPage.css'
 
-const API_BASE = '/api'
+import { API_BASE } from '../api'
 
 function PlantSearchPage() {
   const navigate = useNavigate()
