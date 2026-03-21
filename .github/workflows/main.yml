@@ -83,12 +83,13 @@ jobs:
             RELEASE_DIR="/tmp/sproutly-release-$(date +%s)"
             BACKUP_DIR="/tmp/sproutly-backup-$(date +%s)"
             HEALTH_URL="${HEALTHCHECK_URL:-http://127.0.0.1:7070/api/health}"
+            HEALTH_URL_FALLBACK="http://127.0.0.1:7070/health"
 
             cd "$APP_DIR"
             git pull --ff-only origin main
 
-            docker compose down
-            docker compose up -d --build --force-recreate
+            docker compose down --remove-orphans
+            docker compose up -d --build --force-recreate db app
 
             mkdir -p "$RELEASE_DIR"
             tar -xzf /tmp/frontend-dist.tar.gz -C "$RELEASE_DIR"
@@ -104,8 +105,8 @@ jobs:
             systemctl reload nginx
 
             ok=0
-            for i in 1 2 3 4 5; do
-              if curl -fsS "$HEALTH_URL" >/dev/null; then
+            for i in $(seq 1 24); do
+              if curl --connect-timeout 2 -fsS "$HEALTH_URL" >/dev/null || curl --connect-timeout 2 -fsS "$HEALTH_URL_FALLBACK" >/dev/null; then
                 ok=1
                 break
               fi
@@ -119,6 +120,7 @@ jobs:
                 cp -a "$BACKUP_DIR"/. "$FRONTEND_DIR"/
                 systemctl reload nginx
               fi
+              docker compose ps
               docker compose logs --tail=100
               exit 1
             fi
