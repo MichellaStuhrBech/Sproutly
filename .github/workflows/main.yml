@@ -82,7 +82,7 @@ jobs:
             FRONTEND_DIR="/var/www/sproutly"
             RELEASE_DIR="/tmp/sproutly-release-$(date +%s)"
             BACKUP_DIR="/tmp/sproutly-backup-$(date +%s)"
-            HEALTH_URL="${HEALTHCHECK_URL:-http://127.0.0.1:7070/health}"
+            HEALTH_URL="${HEALTHCHECK_URL:-http://127.0.0.1:7070/api/health}"
 
             cd "$APP_DIR"
             git pull --ff-only origin main

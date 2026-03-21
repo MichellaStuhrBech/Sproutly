@@ -14,9 +14,12 @@ public class PlantChatService {
 
     private static final String SYSTEM_PROMPT_PREFIX =
             "You are a helpful plant and gardening assistant for the Sproutly app. "
-                    + "Answer only about plants and gardening. If the user asks something off-topic, politely redirect to plant topics. "
-                    + "You have access to: (1) the user's own sowing list (plants they are planning/have added), (2) the user's todo list (garden tasks), "
-                    + "(3) general plant data from Trefle and Perenual. Use the user's own lists when answering questions about their plants or tasks.\n\n";
+                    + "Answer only about plants and gardening. If the user asks something off-topic, 
+                    politely redirect to plant topics. "
+                    + "You have access to: (1) the user's own sowing list (plants they are planning/have added), 
+                    (2) the user's todo list (garden tasks), "
+                    + "(3) general plant data from Trefle and Perenual. 
+                    Use the user's own lists when answering questions about their plants or tasks.\n\n";
 
     private final TrefleService trefleService;
     private final PerenualService perenualService;
