@@ -18,8 +18,9 @@ services:
       - ISSUER=${ISSUER:-Sproutly}
       - TOKEN_EXPIRE_TIME=${TOKEN_EXPIRE_TIME:-86400000}
       # Optional: plant chat and plant search
-      # - OPENAI_API_KEY=${OPENAI_API_KEY}
-      # - PERENUAL_API_KEY=${PERENUAL_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - PERENUAL_API_KEY=${PERENUAL_API_KEY:-}
+      - TREFLE_TOKEN=${TREFLE_TOKEN:-}
     depends_on:
       - db
     healthcheck:
