@@ -155,7 +155,6 @@ function CreateAccountPage() {
               Confirm Password
             </label>
             <p className="create-account-hint" aria-live="polite">
-              Same as above (min. 6 characters).
             </p>
             <input
               id="confirmPassword"

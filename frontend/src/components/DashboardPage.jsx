@@ -45,12 +45,6 @@ function DashboardPage() {
       .then((res) => {
         if (res.ok) {
           setIsAdmin(true)
-        } else if (res.status === 401) {
-          // Token invalid or expired; clear so user logs in again and gets fresh token + roles
-          localStorage.removeItem('token')
-          localStorage.removeItem('email')
-          localStorage.removeItem('roles')
-          localStorage.removeItem('displayName')
         }
       })
       .catch(() => {})
