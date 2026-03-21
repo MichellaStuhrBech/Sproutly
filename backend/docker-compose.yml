@@ -9,10 +9,10 @@ services:
       - "7070:7070"
     environment:
       - DEPLOYED=true
-      - DB_NAME=sproutly
-      - CONNECTION_STR=jdbc:postgresql://db:5432/sproutly
-      - DB_USERNAME=postgres
-      - DB_PASSWORD=postgres
+      - DB_NAME=${DB_NAME:-sproutly}
+      - CONNECTION_STR=jdbc:postgresql://db:5432/${DB_NAME:-sproutly}
+      - DB_USERNAME=${DB_USERNAME:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
       # Required for login/register (JWT). Set in .env on server; do not commit real values.
       - SECRET_KEY=${SECRET_KEY:-change-me-in-production-min-32-chars}
       - ISSUER=${ISSUER:-Sproutly}
@@ -33,9 +33,9 @@ services:
     image: postgres:15-alpine
     container_name: sproutly_postgres
     environment:
-      POSTGRES_DB: sproutly
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${DB_NAME:-sproutly}
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
     ports:
       - "5432:5432"
     volumes:

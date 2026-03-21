@@ -43,12 +43,17 @@ In production, set these on the server (e.g. in `/root/backend/.env`, not commit
 Example `/root/backend/.env` on the server:
 
 ```bash
+DB_NAME=sproutly
+DB_USERNAME=postgres
+DB_PASSWORD=choose-a-strong-password
 SECRET_KEY=your-long-random-secret-at-least-32-characters
 # ISSUER=Sproutly
 # TOKEN_EXPIRE_TIME=86400000
 ```
 
 Then run: `docker compose --env-file .env up -d --build`.
+
+Important: when Postgres uses an existing volume, changing `DB_PASSWORD` in `.env` does not automatically change the existing database user's password. Keep it stable, or reset volume / update the DB user password manually.
 
 ### CI/CD (GitHub Actions + SSH)
 
