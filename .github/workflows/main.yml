@@ -78,7 +78,7 @@ jobs:
           script: |
             set -euo pipefail
 
-            APP_DIR="/root/backend"
+            APP_DIR="/root/backend/backend"
             FRONTEND_DIR="/var/www/sproutly"
             RELEASE_DIR="/tmp/sproutly-release-$(date +%s)"
             BACKUP_DIR="/tmp/sproutly-backup-$(date +%s)"

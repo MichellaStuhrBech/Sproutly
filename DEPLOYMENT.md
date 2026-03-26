@@ -20,7 +20,7 @@ The app is deployed on a **DigitalOcean droplet** with this architecture. Keep i
 - **Domain:** michellastuhrbech.dk  
 - **Frontend:** Built to `frontend/dist/`, copied to `/var/www/sproutly`.  
 - **API:** Nginx proxies `https://michellastuhrbech.dk/api` → `http://127.0.0.1:7070/api/`.  
-- **docker-compose:** `/root/backend/docker-compose.yml` (on the server). Services: `app`, `db`.
+- **docker-compose:** `/root/backend/backend/docker-compose.yml` (on the server). Services: `app`, `db`.
 
 ### Constraints
 
@@ -30,7 +30,7 @@ The app is deployed on a **DigitalOcean droplet** with this architecture. Keep i
 
 ### Backend env (Docker)
 
-In production, set these on the server (e.g. in `/root/backend/.env`, not committed):
+In production, set these on the server (e.g. in `/root/backend/backend/.env`, not committed):
 
 | Variable | Required | Description |
 |----------|----------|-------------|
@@ -40,7 +40,7 @@ In production, set these on the server (e.g. in `/root/backend/.env`, not commit
 | `OPENAI_API_KEY` | No | Plant chat. |
 | `PERENUAL_API_KEY` | No | Plant search. |
 
-Example `/root/backend/.env` on the server:
+Example `/root/backend/backend/.env` on the server:
 
 ```bash
 DB_NAME=sproutly
@@ -60,7 +60,7 @@ Important: when Postgres uses an existing volume, changing `DB_PASSWORD` in `.en
 On push to `main`, the workflow (or a server-side script) typically:
 
 1. SSH to the droplet  
-2. `cd /root/backend`  
+2. `cd /root/backend/backend`  
 3. `git pull origin main`  
 4. `docker compose down`  
 5. `docker compose up -d --build --force-recreate`  
